@@ -1,0 +1,49 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "characters": {
+          "$id": {
+            ".read": "data.child('shareMode').val() === 'read' || data.child('shareMode').val() === 'edit' || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('members').child(auth.uid).val() === true)",
+            ".write": "data.exists() && newData.hasChildren(['archetype', 'ratings']) && ((data.child('shareMode').val() === 'edit') || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('ownerUid').val() === auth.uid)) && newData.child('shareMode').val() === data.child('shareMode').val() && newData.child('campaignId').val() === data.child('campaignId').val()",
+            ".validate": "newData.hasChildren(['archetype', 'ratings']) && (!newData.child('shareMode').exists() || newData.child('shareMode').val() === 'read' || newData.child('shareMode').val() === 'edit') && (!newData.child('campaignId').exists() || root.child('campaigns').child(newData.child('campaignId').val()).child('members').child($uid).val() === true)"
+          }
+        },
+        "images": {
+          "$id": {
+            ".read": "root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'read' || root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'edit' || (auth != null && root.child('users').child($uid).child('characters').child($id).child('campaignId').exists() && root.child('campaigns').child(root.child('users').child($uid).child('characters').child($id).child('campaignId').val()).child('members').child(auth.uid).val() === true)",
+            ".write": "root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'edit' || (auth != null && root.child('users').child($uid).child('characters').child($id).child('campaignId').exists() && root.child('campaigns').child(root.child('users').child($uid).child('characters').child($id).child('campaignId').val()).child('ownerUid').val() === auth.uid)",
+            ".validate": "newData.isString() && newData.val().matches(/^data:image\\/webp;base64,[A-Za-z0-9+/=]+$/) && newData.val().length <= 1000000"
+          }
+        }
+      }
+    },
+    "campaigns": {
+      "$id": {
+        ".read": "auth != null && data.child('members').child(auth.uid).val() === true",
+        ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() === auth.uid && newData.child('members').child(auth.uid).val() === true) || (data.child('ownerUid').val() === auth.uid && newData.child('ownerUid').val() === auth.uid))",
+        ".validate": "newData.hasChildren(['name', 'ownerUid', 'members']) && newData.child('name').isString() && newData.child('name').val().length <= 80",
+        "members": {
+          "$memberUid": {
+            ".write": "auth != null && auth.uid === $memberUid && root.child('campaigns').child($id).child('ownerUid').exists() && newData.val() === true",
+            ".validate": "newData.val() === true"
+          }
+        },
+        "sheets": {
+          "$sheetId": {
+            ".write": "auth != null && ((newData.val() === auth.uid && root.child('campaigns').child($id).child('members').child(auth.uid).val() === true && root.child('users').child(auth.uid).child('characters').child($sheetId).exists()) || (!newData.exists() && data.val() === auth.uid))",
+            ".validate": "newData.isString()"
+          }
+        },
+        "image": {
+          ".validate": "newData.isString() && newData.val().matches(/^data:image\\/webp;base64,[A-Za-z0-9+/=]+$/) && newData.val().length <= 1000000"
+        },
+        "battle": {
+          ".validate": "newData.hasChildren()"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+# Local site workflow and inspection files
+.site-sync/
+.site-checkout/
+.manual-tools/
+.manual-text/
+.pdf-tools/
+.svg-preview/
+.pdf-page-*.png
+.sample-*.png
+.contact-*.jpg
+
+# Local dependencies and Python cache
+node_modules/
+__pycache__/
+*.py[cod]
+
+# Local environment secrets
+referencia/
+.env
+.env.*
+!.env.example
+dist/firebase-config.js
+.openai/
+
+# Manual material that cannot be published
+dist/cartilhas/

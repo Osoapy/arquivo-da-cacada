@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eee9dc">
+  <meta name="description" content="Fichas digitais de Monstro da Semana.">
+  <title>Arquivo da Caçada</title>
+  <link rel="icon" href="./images/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="./images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=2">
+  <link rel="stylesheet" href="./editorial.css?v=4">
+</head>
+<body>
+  <div class="corner-tools"><button id="lang-toggle" type="button" aria-label="Switch to English">English</button><span id="user-label"></span><button id="signout" class="text-button hidden">Sair</button></div>
+
+  <main>
+    <section id="auth-view" class="auth-layout">
+      <div class="hero-copy"><div class="site-identity"><img src="./images/eye-mark.png" width="494" height="290" alt=""><span>Arquivo da Caçada</span></div><div class="hero-message"><h1 id="auth-hero-title">Todo monstro<br>deixa <em>rastros.</em></h1><p id="auth-hero-copy">Fichas de caçadores para Monstro da Semana.</p></div></div><small class="image-credit">Ilustração do manual Monstro da Semana</small>
+      <div class="auth-card"><h2 id="auth-title">Entrar</h2><p id="auth-subtitle">Entre com e-mail ou Google.</p><form id="auth-form"><label id="email-label" for="email">E-mail da conta</label><input id="email" name="email" type="email" required autocomplete="email" placeholder="seu@email.com"><label id="password-label" for="password">Senha da conta</label><div class="password-field"><input id="password" name="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Digite sua senha"><button id="password-toggle" class="password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div><button id="email-submit" class="button primary" type="submit">Entrar com e-mail</button></form><button id="switch-auth" class="text-button switch-auth">Não tem conta? Criar conta</button><div class="divider"><span>ou</span></div><button id="google-login" class="button google" type="button"><svg class="google-icon" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.25 5.48-4.75 7.18l7.73 6C44.43 38.03 46.98 31.68 46.98 24.55z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.75 24c0-1.59.27-3.13.77-4.59l-7.98-6.2A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.92-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.19 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Continuar com o Google</span></button><p id="auth-error" class="error" role="alert"></p></div>
+    </section>
+
+    <section id="app-view" class="hidden app-shell">
+      <div class="site-identity app-identity"><img src="./images/eye-mark.png" width="494" height="290" alt=""><span>Arquivo da Caçada</span></div>
+      <div id="library-view"><div class="section-heading"><h1>Caçadores</h1><button id="new-character" class="button primary">Novo caçador</button></div><div id="character-grid" class="character-grid"></div></div>
+
+      <div id="sheet-view" class="hidden"><div class="sheet-nav"><button id="back-to-library" class="text-button">← Todos os caçadores</button><span id="save-status" role="status"></span></div><div class="sheet-hero"><div id="portrait-wrap" class="portrait-wrap"><div id="portrait-placeholder">✳</div><img id="portrait" class="hidden" alt="Retrato do caçador"><label class="portrait-upload" for="portrait-input" title="Alterar imagem">Alterar imagem</label><input id="portrait-input" type="file" accept="image/*" hidden></div><div class="sheet-identity"><small id="sheet-number"></small><input id="character-name" class="name-input" aria-label="Nome do caçador" maxlength="80" placeholder="Nome do caçador"><div class="identity-row"><span id="archetype-badge"></span><input id="appearance" aria-label="Aparência" maxlength="200" placeholder="Aparência / descrição breve"></div></div><button id="delete-character" class="text-button danger">Excluir ficha</button></div>
+      <div class="sheet-grid"><div class="sheet-main"><section class="panel"><div class="panel-head"><div><h2>Classificações</h2></div><span class="panel-note">Escolha uma linha da cartilha ou ajuste os valores.</span></div><label class="field-label" for="rating-preset">Linha de classificações</label><select id="rating-preset"></select><div id="ratings" class="ratings"></div><div id="basic-moves" class="basic-moves"></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>Estado do caçador</h2></div></div><div class="track"><div class="track-head"><strong>Sorte</strong><span>Marque para obter 12 em uma rolagem ou evitar o dano de um ferimento.</span></div><div id="luck-track" class="track-boxes"></div><div class="track-ends"><span>Salvo</span><span>Condenado</span></div></div><div class="track"><div class="track-head"><strong>Dano</strong><span>Com 4 ou mais, marque Instável.</span></div><div id="harm-track" class="track-boxes"></div><div class="track-ends"><span>Ileso</span><span>Morrendo</span></div></div><label class="check-row"><input id="unstable" type="checkbox"> Instável</label><div class="track"><div class="track-head"><strong>Experiência</strong><span>Ao completar 5, escolha uma melhoria.</span></div><div id="xp-track" class="track-boxes"></div></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>Movimentos da cartilha</h2></div></div><p class="panel-note">Clique em um movimento para marcá-lo ou desmarcá-lo.</p><div id="starting-moves" class="starting-moves"></div><div id="move-options" class="move-options"></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>Detalhes da caçada</h2></div><span class="panel-note">Escolhas que a cartilha pede para o seu arquétipo.</span></div><div id="hunt-details" class="hunt-details"></div><div class="form-grid"><label>Movimentos adicionais <textarea id="moves" rows="7" placeholder="Anote movimentos de outras cartilhas ou detalhes dos seus poderes."></textarea></label><label>Equipamentos <textarea id="gear" rows="7" placeholder="Armas, ferramentas, proteção e outros itens."></textarea></label><label id="special-label">Elemento do arquétipo <textarea id="special" rows="5"></textarea></label><label>Histórico com o grupo <textarea id="history" rows="5" placeholder="Como você conhece os outros caçadores?"></textarea></label><label class="full">Notas da investigação <textarea id="notes" rows="6" placeholder="Pistas, pessoas, lugares e perguntas em aberto."></textarea></label></div></section></div>
+      <aside class="sheet-side"><section class="panel dice-panel"><h2>Rolar os dados</h2><p>2d6 + classificação</p><select id="roll-stat" aria-label="Classificação para a rolagem"></select><button id="roll-button" class="button primary">Rolar 2d6 <span>✦</span></button><div id="roll-result" class="roll-result" aria-live="polite"><span>—</span></div></section><section class="panel quick-panel"><h2>Resultados</h2><div class="quick-line"><strong>10+</strong><span>Sucesso total</span></div><div class="quick-line"><strong>7–9</strong><span>Sucesso com complicação</span></div><div class="quick-line"><strong>6−</strong><span>Marque experiência</span></div></section></aside></div></div>
+    </section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js?v=4"></script>
+</body>
+</html>

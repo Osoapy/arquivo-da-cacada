@@ -1,0 +1,639 @@
+{
+  "Arcano": {
+    "ratings": [
+      [
+        0,
+        1,
+        2,
+        1,
+        -1
+      ],
+      [
+        1,
+        1,
+        2,
+        -1,
+        0
+      ],
+      [
+        -1,
+        2,
+        2,
+        0,
+        -1
+      ],
+      [
+        -1,
+        1,
+        2,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        2,
+        0,
+        0
+      ]
+    ],
+    "moves": [
+      "Treinamento mágico avançado",
+      "Reputação mágica",
+      "Vestuário encantado",
+      "Poderia ser pior",
+      "Adivinhação forense",
+      "Vá com tudo ou vá pra casa",
+      "Não é minha culpa",
+      "Praticante",
+      "Escudo mágico",
+      "Terceiro olho"
+    ]
+  },
+  "Delinquente": {
+    "ratings": [
+      [
+        0,
+        2,
+        -1,
+        1,
+        1
+      ],
+      [
+        2,
+        1,
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        2,
+        -1,
+        2,
+        -1
+      ],
+      [
+        0,
+        1,
+        -1,
+        1,
+        2
+      ],
+      [
+        -1,
+        1,
+        1,
+        0,
+        2
+      ]
+    ],
+    "moves": [
+      "Artefato",
+      "Bando",
+      "Pacto com o diabo",
+      "Amigos na corporação",
+      "Gangster",
+      "Volante",
+      "Velha vizinhança",
+      "Notoriedade"
+    ]
+  },
+  "Divino": {
+    "ratings": [
+      [
+        2,
+        -1,
+        0,
+        1,
+        1
+      ],
+      [
+        2,
+        -1,
+        0,
+        2,
+        -1
+      ],
+      [
+        2,
+        1,
+        1,
+        0,
+        -1
+      ],
+      [
+        2,
+        0,
+        -1,
+        1,
+        1
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        -1
+      ]
+    ],
+    "moves": [
+      "Chefe do além",
+      "Asas angelicais",
+      "O que eu preciso, quando eu preciso",
+      "Reconfortante",
+      "Imposição de mãos",
+      "Expulsar o mal",
+      "Fulminante"
+    ]
+  },
+  "Escolhido": {
+    "ratings": [
+      [
+        2,
+        1,
+        -1,
+        -1,
+        2
+      ],
+      [
+        2,
+        1,
+        -1,
+        2,
+        -1
+      ],
+      [
+        1,
+        1,
+        -1,
+        2,
+        1
+      ],
+      [
+        -1,
+        2,
+        2,
+        1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        2,
+        2,
+        1
+      ]
+    ],
+    "moves": [
+      "A grande entrada",
+      "Devastador",
+      "Perseverante",
+      "Invencível",
+      "Resiliente"
+    ]
+  },
+  "Especialista": {
+    "ratings": [
+      [
+        1,
+        2,
+        0,
+        1,
+        -1
+      ],
+      [
+        -1,
+        2,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        -1,
+        1
+      ],
+      [
+        0,
+        2,
+        1,
+        1,
+        -1
+      ],
+      [
+        -1,
+        2,
+        2,
+        0,
+        -1
+      ]
+    ],
+    "moves": [
+      "Eu li sobre este tipo de coisa",
+      "Quase sempre certo",
+      "Preparativos",
+      "Não estava tão ruim quanto parecia",
+      "Acerto preciso",
+      "O homem com um plano",
+      "Passado sombrio"
+    ]
+  },
+  "Iniciado": {
+    "ratings": [
+      [
+        1,
+        0,
+        2,
+        1,
+        -1
+      ],
+      [
+        -1,
+        1,
+        2,
+        1,
+        0
+      ],
+      [
+        2,
+        -1,
+        2,
+        0,
+        -1
+      ],
+      [
+        0,
+        1,
+        2,
+        -1,
+        1
+      ],
+      [
+        1,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "moves": [
+      "Técnicas antigas de combate",
+      "Místico",
+      "Previsões",
+      "Promessa sagrada",
+      "Mentor",
+      "Aprendiz",
+      "Mão amiga",
+      "A velha magia negra"
+    ]
+  },
+  "Injustiçado": {
+    "ratings": [
+      [
+        2,
+        -1,
+        1,
+        1,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        -1,
+        0,
+        1
+      ],
+      [
+        2,
+        0,
+        2,
+        -1,
+        -1
+      ],
+      [
+        2,
+        0,
+        1,
+        -1,
+        1
+      ]
+    ],
+    "moves": [
+      "Alucinado",
+      "NUNCA MAIS!",
+      "O que não me mata…",
+      "Fervor",
+      "Segurança vem primeiro",
+      "Cirurgia improvisada",
+      "Ferramenta certa para o trabalho certo"
+    ]
+  },
+  "Lunático": {
+    "ratings": [
+      [
+        -1,
+        2,
+        0,
+        1,
+        1
+      ],
+      [
+        -1,
+        2,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        -1,
+        1
+      ],
+      [
+        0,
+        2,
+        1,
+        -1,
+        1
+      ],
+      [
+        0,
+        2,
+        2,
+        -1,
+        -1
+      ]
+    ],
+    "moves": [
+      "Ligar os pontos",
+      "Olhos de louco",
+      "Viu, tudo se encaixa",
+      "Mente desconfiada",
+      "Quase sempre ignorado",
+      "Do contra",
+      "Amigos da net",
+      "Furtivo"
+    ]
+  },
+  "Monstruoso": {
+    "ratings": [
+      [
+        2,
+        0,
+        3,
+        -1,
+        -1
+      ],
+      [
+        0,
+        1,
+        3,
+        1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        3,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        3,
+        2,
+        -2
+      ],
+      [
+        -1,
+        2,
+        3,
+        -1,
+        0
+      ]
+    ],
+    "moves": [
+      "Imortal",
+      "Atrativos não-naturais",
+      "Força profana",
+      "Incorpóreo",
+      "Velocidade sobre-humana",
+      "Garras da fera",
+      "Domínio mental",
+      "Vitalidade inesgotável",
+      "Negociador sombrio",
+      "Voo",
+      "Metamorfo",
+      "Uma coisa emprestada"
+    ]
+  },
+  "Mundano": {
+    "ratings": [
+      [
+        1,
+        0,
+        -1,
+        1,
+        2
+      ],
+      [
+        1,
+        1,
+        0,
+        -1,
+        2
+      ],
+      [
+        1,
+        -1,
+        1,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        -1,
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        -1,
+        1,
+        2
+      ]
+    ],
+    "moves": [
+      "Sempre a vítima",
+      "Oops!",
+      "Vamos dar o fora daqui!",
+      "Botão do pânico",
+      "O poder do coração",
+      "O que poderia dar errado?",
+      "Confie em mim",
+      "Não se preocupe, só vou dar uma olhada"
+    ]
+  },
+  "Profissional": {
+    "ratings": [
+      [
+        2,
+        -1,
+        -1,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        2,
+        -1
+      ],
+      [
+        -1,
+        1,
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        2,
+        -1
+      ],
+      [
+        -1,
+        2,
+        -1,
+        2,
+        0
+      ]
+    ],
+    "moves": [
+      "Suprimir emoções",
+      "Inabalável",
+      "Consciência combativa",
+      "Ninguém fica pra trás",
+      "Gênio tático",
+      "Médico",
+      "Mobilidade"
+    ]
+  },
+  "Sinistro": {
+    "ratings": [
+      [
+        -1,
+        1,
+        2,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        2,
+        1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        2,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        2,
+        -1,
+        0
+      ],
+      [
+        0,
+        2,
+        2,
+        -1,
+        -1
+      ]
+    ],
+    "moves": [
+      "Telepatia",
+      "Praga",
+      "A visão",
+      "Premonições",
+      "Palpites",
+      "Sintonizar",
+      "O grande esconjuro",
+      "Mau-olhado"
+    ]
+  },
+  "Viajante": {
+    "ratings": [
+      [
+        -1,
+        2,
+        0,
+        1,
+        1
+      ],
+      [
+        -1,
+        2,
+        0,
+        -1,
+        2
+      ],
+      [
+        -1,
+        2,
+        0,
+        2,
+        -1
+      ],
+      [
+        0,
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        -1,
+        0,
+        2,
+        -1
+      ]
+    ],
+    "moves": [
+      "Efeito borboleta",
+      "Historiador",
+      "Inventor",
+      "Presciência",
+      "Treinamento neural",
+      "Tecnologia avançada é igual magia",
+      "Sem paradoxos",
+      "Androide/Ciborgue",
+      "Disfarce psíquico"
+    ]
+  }
+}
