@@ -1,4 +1,8 @@
 export const english = {
+  'Desvincular personagem?': 'Unlink character?',
+  'sai desta campanha. O mestre deixa de ver e editar a ficha.': 'leaves this campaign. The Keeper will no longer see or edit the sheet.',
+  'Vincular personagem?': 'Link character?',
+  'entra nesta campanha. Os integrantes poderão ver a ficha e o mestre poderá editá-la.': 'joins this campaign. Members will see the sheet and the Keeper will be able to edit it.',
   'Trocar foto': 'Change photo',
   'Adicionar foto': 'Add photo',
   'Abrir ficha': 'Open sheet',

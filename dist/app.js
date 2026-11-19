@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import { getDatabase, ref, onValue, set, get, remove, update } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
-import { english, englishMoves } from './i18n.js?v=4';
+import { english, englishMoves } from './i18n.js?v=5';
 import { basicHelp, startingHelp, playbookHelp } from './move-help.js';
 import { huntDetails } from './hunt-details.js?v=4';
 import { firebaseConfig } from './firebase-config.js';
@@ -337,6 +337,7 @@ $('campaign-detail').addEventListener('click', async (event) => {
   if (event.target.id === 'copy-campaign') { try { await navigator.clipboard.writeText(campaignUrl(activeCampaignId)); toast(t('Link copiado.')); } catch { toast(t('Não foi possível copiar o link.')); } return; }
   const unlink = event.target.closest('[data-unlink]'); if (!unlink || !user) return;
   const id = unlink.dataset.unlink; if (characters[id]?.campaignId !== activeCampaignId) return;
+  if (!await confirmDialog({ title: t('Desvincular personagem?'), message: `${characters[id].name || t('Caçador sem nome')} ${t('sai desta campanha. O mestre deixa de ver e editar a ficha.')}`, confirm: t('Desvincular'), danger: true })) return;
   try { await update(ref(db),{[`${charPath(id)}/campaignId`]:null,[`campaigns/${activeCampaignId}/sheets/${id}`]:null}); delete characters[id].campaignId; renderCampaigns(); toast(t('Personagem desvinculado.')); }
   catch (error) { toast(errText(error)); }
 });
@@ -344,6 +345,7 @@ $('campaign-detail').addEventListener('submit', async (event) => {
   if (event.target.id !== 'link-sheet-form') return;
   event.preventDefault(); const id = $('link-sheet').value;
   if (!user || !activeCampaignId || !characters[id] || characters[id].campaignId) return;
+  if (!await confirmDialog({ title: t('Vincular personagem?'), message: `${characters[id].name || t('Caçador sem nome')} ${t('entra nesta campanha. Os integrantes poderão ver a ficha e o mestre poderá editá-la.')}`, confirm: t('Vincular') })) return;
   try { await update(ref(db),{[`${charPath(id)}/campaignId`]:activeCampaignId,[`campaigns/${activeCampaignId}/sheets/${id}`]:user.uid}); characters[id].campaignId = activeCampaignId; renderCampaigns(); toast(t('Personagem vinculado.')); }
   catch (error) { toast(errText(error)); }
 });

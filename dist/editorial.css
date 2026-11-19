@@ -243,3 +243,12 @@ div.hunt-field .hunt-label{margin-bottom:10px}
 .text-button.danger{color:#a43d30}
 @media(max-width:950px){.battle-columns{grid-template-columns:1fr}}
 @media(max-width:650px){.campaign-hero{flex-direction:column;align-items:start}.campaign-cover{width:100%;height:180px}.battle-panel{padding:18px}.battle-head{flex-direction:column}.round-box{flex-direction:row;width:100%;justify-content:space-between}.battle-foot{flex-direction:column;align-items:start}}
+.sheet-nav{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;column-gap:18px}
+#save-status{justify-self:end;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.combat-actions{align-items:stretch}
+.combat-actions .button,.round-box .button,.monster-form .button{margin-top:0}
+.combat-actions .button,.combat-actions input,.combat-actions select{height:36px;box-sizing:border-box}
+.combat-actions .button{padding:0 12px;line-height:1}
+.combat-actions input{padding:0 8px}.combat-actions select{padding:0 8px}
+.combat-actions label{align-self:center}
+.round-box .button{height:32px;padding:0 12px}
