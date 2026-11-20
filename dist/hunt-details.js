@@ -13,15 +13,15 @@ export const huntDetails = {
       options: [o('Consumíveis', 'Consumables'), o('Focos', 'Focuses'), o('Gestos', 'Gestures'), o('Encantamentos', 'Incantations')] },
   ],
   Delinquente: [
-    { key: 'background', type: 'pick', min: 1, max: 1, label: o('Antecedentes', 'Background'), hint: o('O que você fazia antes de caçar monstros?', 'What did you do before hunting monsters?'),
+    { key: 'background', type: 'pick', min: 1, max: 1, label: o('Antecedentes', 'Background'),
       options: [o('Capanga', 'Hard man'), o('Arrombador', 'Burglar'), o('Vigarista', 'Con man'), o('Intermediário', 'Fixer'), o('Assassino', 'Assassin'), o('Charlatão', 'Charlatan'), o('Punguista', 'Pickpocket')] },
     { key: 'heat', type: 'pick', min: 2, max: 5, named: true, namePlaceholder: o('Nome da pessoa', 'Their name'), label: o('Perseguição', 'Heat'), hint: o('Quem está atrás de você? Escolha pelo menos dois e dê nomes.', 'Who is after you? Pick at least two and name them.'),
       options: [o('Um investigador da polícia', 'A police investigator'), o('Um rival do passado', 'An old rival'), o('Um criminoso influente', 'A powerful criminal'), o('Alguém com poderes de quem você tirou vantagem', 'Someone with powers you took advantage of'), o('Um velho parceiro que você traiu', 'A former partner you betrayed')] },
-    { key: 'underworld', type: 'pick', min: 1, max: 1, named: true, namePlaceholder: o('Qual criatura?', 'Which creature?'), label: o('Submundo', 'Underworld'), hint: o('Como você descobriu o submundo real?', 'How did you find out about the real underworld?'),
+    { key: 'underworld', type: 'pick', min: 1, max: 1, named: true, namePlaceholder: o('Qual criatura?', 'Which creature?'), label: o('Submundo', 'Underworld'),
       options: [o('O alvo de um trabalho era uma criatura perigosa', 'A job target was a dangerous creature'), o('Você trabalhou com alguém que era mais do que parecia', 'You worked with someone who was more than they seemed'), o('Você foi contratado por alguma coisa estranha', 'You were hired by something strange'), o('Um trabalho deu errado', 'A job went wrong')] },
   ],
   Divino: [
-    { key: 'mission', type: 'pick', min: 1, max: 1, named: true, namePlaceholder: o('Detalhes', 'Details'), label: o('Missão', 'Mission'), hint: o('Por que você foi colocado na Terra?', 'Why were you put on Earth?'),
+    { key: 'mission', type: 'pick', min: 1, max: 1, named: true, namePlaceholder: o('Detalhes', 'Details'), label: o('Missão', 'Mission'),
       options: [o('Combater os planos do Adversário', 'Fight the schemes of the Adversary'), o('Guiar os caçadores para impedir o Fim dos Dias', 'Guide the hunters to prevent the End Times'), o('Guiar os caçadores para garantir o Fim dos Dias', 'Guide the hunters to bring about the End Times'), o('Exilado, servindo ao Bem às escondidas', 'Exiled, serving Good in secret'), o('Preparar e proteger um dos caçadores', 'Prepare and protect one of the hunters')] },
   ],
   Escolhido: [
@@ -38,7 +38,7 @@ export const huntDetails = {
     { key: 'weaponMaterial', type: 'text', label: o('Arma especial: material', 'Special weapon: material'), placeholder: o('Aço, ferro puro, prata, madeira, osso…', 'Steel, cold iron, silver, wood, bone…') },
   ],
   Especialista: [
-    { key: 'haven', type: 'pick', min: 3, max: 3, label: o('Refúgio', 'Haven'), hint: o('Escolha três instalações do seu local seguro.', 'Pick three features of your safe place.'),
+    { key: 'haven', type: 'pick', min: 3, max: 3, label: o('Refúgio', 'Haven'),
       options: [o('Biblioteca erudita', 'Lore library'), o('Biblioteca mística', 'Mystical library'), o('Feitiços de proteção', 'Protection spells'), o('Arsenal', 'Armory'), o('Enfermaria', 'Infirmary'), o('Oficina', 'Workshop'), o('Calabouço', 'Oubliette'), o('Quarto do pânico', 'Panic room'), o('Laboratório de magia', 'Magical laboratory')] },
   ],
   Iniciado: [
@@ -66,7 +66,7 @@ export const huntDetails = {
       options: [o('Sempre lutou pelo bem', 'Always fought for good'), o('Era mau e mudou de lado', 'Was evil and switched sides')] },
     { key: 'curse', type: 'pick', min: 1, max: 1, named: true, namePlaceholder: o('Substância, emoção ou mestre', 'Substance, drive or master'), label: o('Maldição', 'Curse'),
       options: [o('Alimentação', 'Feed'), o('Vulnerabilidade', 'Vulnerability'), o('Puro impulso', 'Pure drive'), o('Mestre sombrio', 'Dark master')] },
-    { key: 'attackBases', type: 'pick', min: 1, max: 2, label: o('Ataques naturais: bases', 'Natural attacks: bases'), hint: o('Uma base com um extra, ou duas bases.', 'One base plus an extra, or two bases.'),
+    { key: 'attackBases', type: 'pick', min: 1, max: 2, label: o('Ataques naturais: bases', 'Natural attacks: bases'),
       options: [o('Dentes', 'Teeth'), o('Garras', 'Claws'), o('Força mágica', 'Magical force'), o('Drenagem vital', 'Life-drain')] },
     { key: 'attackExtra', type: 'pick', min: 0, max: 1, named: true, namePlaceholder: o('Em qual base?', 'On which base?'), label: o('Ataques naturais: extra', 'Natural attacks: extra'),
       options: [o('+1 de dano', '+1 harm'), o('Ignora armadura', 'Ignore-armour'), o('Alcance extra', 'Extra range')] },
@@ -82,7 +82,7 @@ export const huntDetails = {
       options: [o('Motivos duvidosos', 'Dubious motives'), o('Burocrática', 'Bureaucratic'), o('Hierarquia sigilosa', 'Secret hierarchy'), o('Missões enigmáticas', 'Enigmatic missions'), o('Superiores hostis', 'Hostile superiors'), o('Rivalidade entre departamentos', 'Interdepartmental rivalry'), o('Cortes de fundos', 'Funding cuts'), o('Não faz prisioneiros', 'Takes no prisoners'), o('Captura alvos vivos', 'Captures targets alive')] },
   ],
   Sinistro: [
-    { key: 'darkSide', type: 'pick', min: 3, max: 3, label: o('Lado sombrio', 'Dark side'), hint: o('O Guardião usa estas marcas para pedir coisas desagradáveis.', 'The Keeper uses these tags to ask for unpleasant things.'),
+    { key: 'darkSide', type: 'pick', min: 3, max: 3, label: o('Lado sombrio', 'Dark side'),
       options: [o('Violência', 'Violence'), o('Depressão', 'Depression'), o('Segredos', 'Secrets'), o('Luxúria', 'Lust'), o('Barganha sombria', 'Dark bargain'), o('Culpa', 'Guilt'), o('Sem alma', 'Soulless'), o('Vício', 'Addiction'), o('Alterações de humor', 'Mood swings'), o('Fúria', 'Rage'), o('Autodestruição', 'Self-destruction'), o('Pouco autocontrole', 'Poor self-control'), o('Desejo de poder', 'Lust for power'), o('Alucinações', 'Hallucinations'), o('Dor', 'Pain'), o('Paranoia', 'Paranoia')] },
   ],
   Viajante: [

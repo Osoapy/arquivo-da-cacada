@@ -12,9 +12,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css?v=2">
-  <link rel="stylesheet" href="./editorial.css?v=5">
+  <link rel="stylesheet" href="./editorial.css?v=17">
 </head>
-<body>
+<body class="auth-pending">
   <div class="corner-tools"><button id="lang-toggle" type="button" aria-label="Switch to English">English</button><span id="user-label"></span><button id="signout" class="text-button hidden">Sair</button></div>
 
   <main>
@@ -24,10 +24,10 @@
     </section>
 
     <section id="app-view" class="hidden app-shell">
-      <div class="site-identity app-identity"><img src="./images/eye-mark.png" width="494" height="290" alt=""><span>Arquivo da Caçada</span></div>
+      <a href="./" id="home-link" class="site-identity app-identity" aria-label="Arquivo da Caçada: ir para Caçadores"><img src="./images/eye-mark.png" width="494" height="290" alt=""><span>Arquivo da Caçada</span></a>
       <div id="library-view"><div class="section-heading"><h1>Caçadores</h1><button id="new-character" class="button primary">Novo caçador</button></div><div id="character-grid" class="character-grid"></div></div>
 
-      <div id="sheet-view" class="hidden"><div class="sheet-nav"><button id="back-to-library" class="text-button">← Todos os caçadores</button><span id="save-status" role="status"></span></div><div class="sheet-hero"><div id="portrait-wrap" class="portrait-wrap"><div id="portrait-placeholder">✳</div><img id="portrait" class="hidden" alt="Retrato do caçador"><label class="portrait-upload" for="portrait-input" title="Alterar imagem">Alterar imagem</label><input id="portrait-input" type="file" accept="image/*" hidden></div><div class="sheet-identity"><small id="sheet-number"></small><input id="character-name" class="name-input" aria-label="Nome do caçador" maxlength="80" placeholder="Nome do caçador"><div class="identity-row"><span id="archetype-badge"></span><input id="appearance" aria-label="Aparência" maxlength="200" placeholder="Aparência / descrição breve"></div></div><button id="delete-character" class="text-button danger">Excluir ficha</button></div>
+      <div id="sheet-view" class="hidden"><div class="sheet-nav"><button id="back-to-library" class="text-button">← Todos os caçadores</button><span id="save-status" role="status"></span></div><div class="sheet-hero"><div id="portrait-wrap" class="portrait-wrap"><div id="portrait-placeholder"><img src="./images/eye-mark.png" alt=""></div><img id="portrait" class="hidden" alt="Retrato do caçador"><label class="portrait-upload" for="portrait-input" title="Alterar imagem">Alterar imagem</label><input id="portrait-input" type="file" accept="image/*" hidden></div><div class="sheet-identity"><input id="character-name" class="name-input" aria-label="Nome do caçador" maxlength="80" placeholder="Nome do caçador"><div class="identity-row"><span id="archetype-badge"></span><input id="appearance" aria-label="Aparência" maxlength="200" placeholder="Aparência / descrição breve"></div></div><button id="delete-character" class="text-button danger">Excluir ficha</button></div>
       <div class="sheet-grid"><div class="sheet-main"><section class="panel"><div class="panel-head"><div><h2>Classificações</h2></div><span class="panel-note">Escolha uma linha da cartilha ou ajuste os valores.</span></div><label class="field-label" for="rating-preset">Linha de classificações</label><select id="rating-preset"></select><div id="ratings" class="ratings"></div><div id="basic-moves" class="basic-moves"></div></section>
       <section class="panel"><div class="panel-head"><div><h2>Estado do caçador</h2></div></div><div class="track"><div class="track-head"><strong>Sorte</strong><span>Marque para obter 12 em uma rolagem ou evitar o dano de um ferimento.</span></div><div id="luck-track" class="track-boxes"></div><div class="track-ends"><span>Salvo</span><span>Condenado</span></div></div><div class="track"><div class="track-head"><strong>Dano</strong><span>Com 4 ou mais, marque Instável.</span></div><div id="harm-track" class="track-boxes"></div><div class="track-ends"><span>Ileso</span><span>Morrendo</span></div></div><label class="check-row"><input id="unstable" type="checkbox"> Instável</label><div class="track"><div class="track-head"><strong>Experiência</strong><span>Ao completar 5, escolha uma melhoria.</span></div><div id="xp-track" class="track-boxes"></div></div></section>
       <section class="panel"><div class="panel-head"><div><h2>Movimentos da cartilha</h2></div></div><p class="panel-note">Clique em um movimento para marcá-lo ou desmarcá-lo.</p><div id="starting-moves" class="starting-moves"></div><div id="move-options" class="move-options"></div></section>
@@ -36,6 +36,6 @@
     </section>
   </main>
   <div id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./app.js?v=5"></script>
+  <script type="module" src="./app.js?v=12"></script>
 </body>
 </html>

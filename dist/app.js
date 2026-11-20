@@ -1,16 +1,19 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import { getDatabase, ref, onValue, set, get, remove, update } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
-import { english, englishMoves } from './i18n.js?v=5';
+import { english, englishMoves } from './i18n.js?v=9';
 import { basicHelp, startingHelp, playbookHelp } from './move-help.js';
-import { huntDetails } from './hunt-details.js?v=4';
+import { huntDetails } from './hunt-details.js?v=6';
+import { huntHelp } from './hunt-help.js?v=6';
+import { cropImage } from './crop.js?v=6';
 import { firebaseConfig } from './firebase-config.js';
 
 const auth = getAuth(initializeApp(firebaseConfig));
 const db = getDatabase();
 const $ = (id) => document.getElementById(id);
 $('library-view').insertAdjacentHTML('beforebegin', '<nav class="app-tabs" aria-label="Navegação"><button id="tab-characters" type="button"></button><button id="tab-campaigns" type="button"></button></nav>');
-$('library-view').insertAdjacentHTML('afterend', '<section id="campaign-view" class="hidden"><div class="section-heading"><h1 id="campaign-heading"></h1></div><div class="campaign-forms"><form id="create-campaign-form" class="panel"><h2 id="create-campaign-heading"></h2><input id="campaign-name" maxlength="80" required><button class="button primary" type="submit" id="create-campaign-button"></button></form><form id="join-campaign-form" class="panel"><h2 id="join-campaign-heading"></h2><input id="campaign-code" required><button class="button outline" type="submit" id="join-campaign-button"></button></form></div><div id="campaign-list" class="campaign-list"></div><div id="campaign-detail"></div></section>');
+$('library-view').insertAdjacentHTML('afterend', '<section id="campaign-view" class="hidden"><div class="section-heading"><h1 id="campaign-heading"></h1></div><ul id="campaign-rules" class="campaign-rules"></ul><div class="campaign-forms"><form id="create-campaign-form" class="panel"><h2 id="create-campaign-heading"></h2><input id="campaign-name" maxlength="80" required><textarea id="campaign-new-description" maxlength="1000" rows="2"></textarea><button class="button primary" type="submit" id="create-campaign-button"></button></form><form id="join-campaign-form" class="panel"><h2 id="join-campaign-heading"></h2><input id="campaign-code" required><button class="button outline" type="submit" id="join-campaign-button"></button></form></div><div id="campaign-list" class="campaign-list"></div><div id="campaign-detail"></div></section>');
+$('campaign-view').insertAdjacentHTML('afterend', '<section id="invite-view" class="invite-view hidden"></section>');
 $('back-to-library').insertAdjacentHTML('afterend', '<button id="share-character" class="text-button" type="button"></button>');
 const stats = ['Braveza', 'Esperteza', 'Estranheza', 'Firmeza', 'Sutileza'];
 const moves = ['Partir pra porrada / Proteger alguém', 'Investigar um mistério / Perceber uma enrascada', 'Usar magia', 'Agir sob pressão / Dar uma mão', 'Manipular alguém'];
@@ -58,10 +61,16 @@ function renderLanguage() {
   $('tab-campaigns').textContent = t('Campanhas');
   $('campaign-heading').textContent = t('Campanhas');
   $('create-campaign-heading').textContent = t('Criar campanha');
+  $('campaign-rules').innerHTML = [
+    ['Mestre', 'Quem cria a campanha é o mestre: vê e edita todas as fichas vinculadas e controla o simulador de batalha.'],
+    ['Um por vez', 'Cada caçador só pode estar em uma campanha por vez.'],
+    ['Privacidade', 'Jogadores não veem as fichas uns dos outros, a não ser que o dono deixe a ficha pública pelo link. As ameaças do simulador são só do mestre.'],
+  ].map(([title, text]) => `<li><strong>${t(title)}</strong><span>${t(text)}</span></li>`).join('');
   $('join-campaign-heading').textContent = t('Entrar em campanha');
   $('create-campaign-button').textContent = t('Criar campanha');
   $('join-campaign-button').textContent = t('Entrar');
   $('campaign-name').placeholder = t('Nome da campanha');
+  $('campaign-new-description').placeholder = t('Descrição (opcional): tom, cenário, horário das sessões…');
   $('campaign-code').placeholder = t('Código ou link da campanha');
   $('share-character').textContent = t('Compartilhar ficha');
   renderAuth();
@@ -73,7 +82,7 @@ $('lang-toggle').addEventListener('click', () => { locale = locale === 'pt' ? 'e
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast = (message) => { $('toast').textContent = message; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 3300); };
-const errText = (error) => /permission[ _-]?denied/i.test(`${error?.code} ${error?.message}`) ? t('Você não tem permissão para acessar isto. Se a ficha foi compartilhada, confira se as regras do banco estão publicadas.') : t(({'auth/invalid-credential':'E-mail ou senha incorretos.','auth/email-already-in-use':'Este e-mail já está cadastrado.','auth/weak-password':'Use uma senha com pelo menos 6 caracteres.','auth/popup-closed-by-user':'A janela de login foi fechada.','auth/unauthorized-domain':'Adicione este domínio aos domínios autorizados no Firebase Authentication.','permission_denied':'Configure as regras do Realtime Database conforme o README.'}[error?.code] || error?.message || 'Não foi possível concluir a operação.'));
+const errText = (error) => /permission[ _-]?denied/i.test(`${error?.code} ${error?.message}`) ? t('Sem permissão para isso. Confira se a versão mais recente do database.rules.json está publicada no Firebase.') : t(({'auth/invalid-credential':'E-mail ou senha incorretos.','auth/email-already-in-use':'Este e-mail já está cadastrado.','auth/weak-password':'Use uma senha com pelo menos 6 caracteres.','auth/popup-closed-by-user':'A janela de login foi fechada.','auth/unauthorized-domain':'Adicione este domínio aos domínios autorizados no Firebase Authentication.','permission_denied':'Configure as regras do Realtime Database conforme o README.'}[error?.code] || error?.message || 'Não foi possível concluir a operação.'));
 const confirmDialog = ({ title, message, confirm, danger = false }) => new Promise((resolve) => {
   const dialog = document.createElement('dialog'); dialog.className = 'share-dialog confirm-dialog' + (danger ? ' danger' : '');
   dialog.innerHTML = `<h2>${escapeHtml(title)}</h2><p class="dialog-message">${escapeHtml(message)}</p><div class="dialog-actions"><button type="button" class="button outline" data-answer="no">${t('Cancelar')}</button><button type="button" class="button primary" data-answer="yes">${escapeHtml(confirm)}</button></div>`;
@@ -82,6 +91,7 @@ const confirmDialog = ({ title, message, confirm, danger = false }) => new Promi
   dialog.addEventListener('close', () => { dialog.remove(); resolve(answer); });
   document.body.append(dialog); dialog.showModal(); dialog.querySelector('[data-answer="no"]').focus();
 });
+const cropLabels = () => ({ title: t('Recortar imagem'), hint: t('Arraste para posicionar e use o controle (ou a roda do mouse) para aproximar.'), zoom: t('Zoom'), cancel: t('Cancelar'), confirm: t('Usar imagem') });
 const setTab = (name) => { $('tab-characters').classList.toggle('active', name === 'characters'); $('tab-campaigns').classList.toggle('active', name === 'campaigns'); };
 const charPath = (id, uid = user?.uid) => `users/${uid}/characters/${id}`;
 const imagePath = (id, uid = user?.uid) => `users/${uid}/images/${id}`;
@@ -137,6 +147,7 @@ $('signout').addEventListener('click', () => signOut(auth).catch((error) => toas
 onAuthStateChanged(auth, (nextUser) => {
   clearTimeout(saveTimer);
   unsubCharacters?.(); unsubImages?.(); unsubCampaigns?.();
+  document.body.classList.remove('auth-pending');
   user = nextUser; activeId = null; activeOwnerUid = user?.uid || null; characters = {}; images = {}; campaignIds = {};
   $('auth-view').classList.toggle('hidden',!!user || !!sharedTarget);
   $('app-view').classList.toggle('hidden',!user && !sharedTarget);
@@ -144,9 +155,9 @@ onAuthStateChanged(auth, (nextUser) => {
   $('user-label').textContent = user?.displayName || user?.email || '';
   if (sharedTarget) { openShared(sharedTarget[1], sharedTarget[2]); return; }
   if (!user) return;
-  if (new URLSearchParams(location.search).has('campaign')) showCampaigns(); else showLibrary();
-  unsubCharacters = onValue(ref(db,`users/${user.uid}/characters`), (snapshot) => { characters = snapshot.val() || {}; renderLibrary(); const links = JSON.stringify(Object.entries(characters).map(([id,c]) => [id,c.campaignId || '',c.name || ''])); if (links !== lastCampaignLinks) { lastCampaignLinks = links; renderCampaigns(); } }, (error) => toast(errText(error)));
-  unsubImages = onValue(ref(db,`users/${user.uid}/images`), (snapshot) => { images = snapshot.val() || {}; renderLibrary(); if (activeId) renderPortrait(); }, (error) => toast(errText(error)));
+  const invited = new URLSearchParams(location.search).get('campaign'); if (invited && /^[0-9a-f-]{36}$/i.test(invited)) showInvite(invited); else showLibrary();
+  unsubCharacters = onValue(ref(db,`users/${user.uid}/characters`), (snapshot) => { characters = snapshot.val() || {}; renderLibrary(); renderInvite(); const links = JSON.stringify(Object.entries(characters).map(([id,c]) => [id,c.campaignId || '',c.name || ''])); if (links !== lastCampaignLinks) { lastCampaignLinks = links; renderCampaigns(); } }, (error) => toast(errText(error)));
+  unsubImages = onValue(ref(db,`users/${user.uid}/images`), (snapshot) => { images = snapshot.val() || {}; renderLibrary(); renderInvite(); if (activeId) renderPortrait(); }, (error) => toast(errText(error)));
   unsubCampaigns = onValue(ref(db,`users/${user.uid}/campaigns`), (snapshot) => { campaignIds = snapshot.val() || {}; renderCampaigns(); }, (error) => toast(errText(error)));
 });
 
@@ -154,7 +165,7 @@ function renderLibrary() {
   const entries = Object.entries(characters).sort((a,b) => (b[1].updatedAt || 0) - (a[1].updatedAt || 0));
   $('character-grid').innerHTML = entries.length ? entries.map(([id,c]) => `<article class="character-card"><button class="card-open" data-open="${escapeHtml(id)}"><div class="card-image"><img src="${images[id] ? escapeHtml(images[id]) : artFor(c.archetype)}" alt=""></div><div class="card-body"><small>${escapeHtml(t(c.archetype))}</small><strong>${escapeHtml(c.name || t('Caçador sem nome'))}</strong><div class="card-footer"><span>${t('Dano')} ${Number(c.harm)||0}/7</span><span>${t('Sorte')} ${Number(c.luck)||0}/7</span></div></div></button><div class="card-actions"><button type="button" data-share="${escapeHtml(id)}">${t('Compartilhar')}</button><button type="button" data-delete="${escapeHtml(id)}">${t('Excluir')}</button></div></article>`).join('') : `<div class="empty-state"><h2>${t('Nenhuma ficha cadastrada.')}</h2></div>`;
 }
-function showLibrary() { setTab('characters'); activeId = null; activeOwnerUid = user?.uid || null; activeCanEdit = true; $('library-view').classList.remove('hidden'); $('campaign-view').classList.add('hidden'); $('sheet-view').classList.add('hidden'); document.querySelector('.app-tabs').classList.remove('hidden'); renderLibrary(); }
+function showLibrary() { leaveInvite(); setTab('characters'); activeId = null; activeOwnerUid = user?.uid || null; activeCanEdit = true; $('library-view').classList.remove('hidden'); $('campaign-view').classList.add('hidden'); $('sheet-view').classList.add('hidden'); document.querySelector('.app-tabs').classList.remove('hidden'); renderLibrary(); }
 $('back-to-library').addEventListener('click', () => { clearTimeout(saveTimer); if (activeId && activeCanEdit) saveCharacter(); if (sharedTarget) location.href = location.pathname; else showLibrary(); });
 $('character-grid').addEventListener('click', (event) => { const open = event.target.closest('[data-open]'); const share = event.target.closest('[data-share]'); const del = event.target.closest('[data-delete]'); if (open) openCharacter(open.dataset.open); else if (share) shareCharacter(share.dataset.share); else if (del) deleteCharacter(del.dataset.delete); });
 
@@ -180,15 +191,57 @@ async function openShared(uid, id) {
 }
 
 $('tab-characters').addEventListener('click', showLibrary);
+$('home-link').addEventListener('click', (event) => {
+  if (!user || sharedTarget || event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) return;
+  event.preventDefault(); clearTimeout(saveTimer); if (activeId && activeCanEdit) saveCharacter();
+  showLibrary(); window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 $('tab-campaigns').addEventListener('click', showCampaigns);
 function showCampaigns() {
+  if (inviteState) leaveInvite();
   setTab('campaigns');
   if (!user) return;
   activeId = null; $('library-view').classList.add('hidden'); $('sheet-view').classList.add('hidden'); $('campaign-view').classList.remove('hidden');
   document.querySelector('.app-tabs').classList.remove('hidden');
-  activeCampaignId ||= new URLSearchParams(location.search).get('campaign');
-  if (activeCampaignId) $('campaign-code').value = activeCampaignId;
   renderCampaigns();
+}
+async function syncInvite(campaignId, campaign) {
+  const invite = { name: campaign.name, description: campaign.description || null, image: campaign.image || null, ownerName: user?.displayName || null };
+  try {
+    const current = (await get(ref(db,`campaignInvites/${campaignId}`))).val() || {};
+    if (['name','description','image','ownerName'].some((k) => (current[k] ?? null) !== invite[k])) await set(ref(db,`campaignInvites/${campaignId}`), Object.fromEntries(Object.entries(invite).filter(([,v]) => v !== null)));
+  } catch {}
+}
+let inviteState = null;
+const leaveInvite = () => { inviteState = null; $('invite-view').classList.add('hidden'); if (new URLSearchParams(location.search).has('campaign')) history.replaceState(null, '', location.pathname); };
+async function showInvite(campaignId) {
+  activeId = null; for (const v of ['library-view','sheet-view','campaign-view']) $(v).classList.add('hidden');
+  document.querySelector('.app-tabs').classList.remove('hidden'); setTab('');
+  $('invite-view').classList.remove('hidden');
+  $('invite-view').innerHTML = `<div class="invite-loading">${t('Abrindo convite…')}</div>`;
+  const member = await get(ref(db,`campaigns/${campaignId}/members/${user.uid}`)).then((s) => s.val() === true).catch(() => false);
+  if (member) { leaveInvite(); activeCampaignId = campaignId; showCampaigns(); return; }
+  const invite = await get(ref(db,`campaignInvites/${campaignId}`)).then((s) => s.val()).catch(() => null);
+  inviteState = { campaignId, invite, choice: null, busy: false };
+  renderInvite();
+}
+function renderInvite() {
+  if (!inviteState || $('invite-view').classList.contains('hidden')) return;
+  const { invite, choice, busy } = inviteState;
+  const free = Object.entries(characters).filter(([,c]) => !c.campaignId).sort((a,b) => (b[1].updatedAt || 0) - (a[1].updatedAt || 0));
+  const busyOnes = Object.entries(characters).filter(([,c]) => c.campaignId);
+  const card = ([id,c], disabled) => `<label class="invite-hunter ${disabled ? 'disabled' : ''}"><input type="radio" name="invite-hunter" value="${escapeHtml(id)}" ${choice === id ? 'checked' : ''} ${disabled ? 'disabled' : ''}><img src="${images[id] ? escapeHtml(images[id]) : artFor(c.archetype)}" alt=""><span><strong>${escapeHtml(c.name || t('Caçador sem nome'))}</strong><small>${disabled ? t('Já está em outra campanha') : escapeHtml(t(c.archetype))}</small></span></label>`;
+  $('invite-view').innerHTML = `<article class="invite-card">
+    <div class="invite-cover">${invite?.image ? `<img src="${escapeHtml(invite.image)}" alt="">` : '<span class="cover-placeholder"><img src="./images/eye-mark.png" alt=""></span>'}</div>
+    <div class="invite-body">
+      <span class="eyebrow">${t('Convite para campanha')}</span>
+      <h1>${escapeHtml(invite?.name || t('Campanha'))}</h1>
+      ${invite?.ownerName ? `<p class="invite-owner">${t('Mestre')}: ${escapeHtml(invite.ownerName)}</p>` : ''}
+      ${invite?.description ? `<p class="invite-desc">${escapeHtml(invite.description)}</p>` : !invite ? `<p class="invite-desc">${t('Não deu para carregar os detalhes deste convite. Você ainda pode entrar, ou pedir um link novo ao mestre.')}</p>` : ''}
+      <h2>${t('Com qual caçador você vai entrar?')}</h2>
+      <div class="invite-hunters">${free.map((e) => card(e, false)).join('')}<label class="invite-hunter none"><input type="radio" name="invite-hunter" value="" ${choice === '' ? 'checked' : ''}><span class="none-mark">＋</span><span><strong>${t('Escolher depois')}</strong><small>${t('Entre agora e vincule um caçador mais tarde')}</small></span></label>${busyOnes.map((e) => card(e, true)).join('')}</div>
+      <div class="invite-actions"><button type="button" class="button outline" id="invite-decline">${t('Agora não')}</button><button type="button" class="button primary" id="invite-accept" ${choice === null || busy ? 'disabled' : ''}>${busy ? t('Entrando…') : t('Entrar na campanha')}</button></div>
+    </div></article>`;
 }
 let campaignListeners = [];
 let battleCtx = null;
@@ -199,9 +252,9 @@ async function renderCampaigns() {
   if (!user || $('campaign-view').classList.contains('hidden')) { stopCampaignListeners(); battleCtx = null; return; }
   const token = ++campaignRenderToken;
   const ids = Object.keys(campaignIds);
-  const items = await Promise.all(ids.map(async (id) => { try { return [id,(await get(ref(db,`campaigns/${id}`))).val()]; } catch { return [id,null]; } }));
+  const items = await Promise.all(ids.map(async (id) => { try { const c = (await get(ref(db,`campaigns/${id}`))).val(); if (!c) set(ref(db,`users/${user.uid}/campaigns/${id}`), null).catch(() => {}); return [id,c]; } catch (error) { if (/permission/i.test(`${error?.code} ${error?.message}`)) set(ref(db,`users/${user.uid}/campaigns/${id}`), null).catch(() => {}); return [id,null]; } }));
   if (token !== campaignRenderToken) return;
-  $('campaign-list').innerHTML = items.filter(([,c]) => c).map(([id,c]) => `<button type="button" data-campaign="${escapeHtml(id)}" class="${id === activeCampaignId ? 'selected' : ''}">${c.image ? `<img src="${escapeHtml(c.image)}" alt="">` : '<span class="campaign-thumb">✳</span>'}<span>${escapeHtml(c.name)}</span></button>`).join('') || `<p>${t('Nenhuma campanha ainda.')}</p>`;
+  $('campaign-list').innerHTML = items.filter(([,c]) => c).map(([id,c]) => { const count = Object.keys(c.sheets || {}).length; return `<button type="button" data-campaign="${escapeHtml(id)}" class="campaign-card ${id === activeCampaignId ? 'selected' : ''}" aria-pressed="${id === activeCampaignId}"><span class="campaign-card-cover">${c.image ? `<img src="${escapeHtml(c.image)}" alt="">` : '<span class="cover-placeholder"><img src="./images/eye-mark.png" alt=""></span>'}</span><span class="campaign-card-body"><strong>${escapeHtml(c.name)}</strong><small>${c.ownerUid === user.uid ? t('Você é o mestre') : t('Você joga')} · ${count} ${count === 1 ? t('personagem') : t('personagens')}</small></span></button>`; }).join('') || `<p class="campaign-empty">${t('Nenhuma campanha ainda.')}</p>`;
   stopCampaignListeners();
   if (!activeCampaignId || !campaignIds[activeCampaignId]) { $('campaign-detail').innerHTML = ''; battleCtx = null; return; }
   const campaign = items.find(([id]) => id === activeCampaignId)?.[1];
@@ -212,13 +265,19 @@ async function renderCampaigns() {
   }))).filter(Boolean);
   if (token !== campaignRenderToken) return;
   const available = Object.entries(characters).filter(([,c]) => !c.campaignId);
-  const cover = campaign.image ? `<img src="${escapeHtml(campaign.image)}" alt="">` : '<span class="cover-placeholder">✳</span>';
-  $('campaign-detail').innerHTML = `<div class="panel campaign-detail"><div class="campaign-hero"><div class="campaign-cover">${cover}${owner ? `<label class="cover-upload" for="campaign-image-input">${t(campaign.image ? 'Trocar foto' : 'Adicionar foto')}</label><input id="campaign-image-input" type="file" accept="image/*" hidden>` : ''}</div><div class="campaign-info"><span class="campaign-role">${owner ? t('Você criou esta campanha') : t('Você participa desta campanha')}</span><h2>${escapeHtml(campaign.name)}</h2><p>${t('Código da campanha')}: <code>${escapeHtml(campaignId)}</code></p><button type="button" class="text-button" id="copy-campaign">${t('Copiar convite')}</button></div></div>
-    <h3>${t('Personagens vinculados')}</h3><div class="campaign-roster">${linked.map(({id,uid,c,img}) => `<div class="roster-card"><a class="roster-open" href="${sheetUrl(uid,id)}" title="${escapeHtml(t('Abrir ficha'))}"><img src="${img ? escapeHtml(img) : artFor(c.archetype)}" alt=""><span><strong>${escapeHtml(c.name || t('Caçador sem nome'))}</strong><small>${escapeHtml(t(c.archetype))}</small></span></a>${uid === user.uid ? `<button type="button" class="roster-unlink" data-unlink="${escapeHtml(id)}">${t('Desvincular')}</button>` : ''}</div>`).join('') || `<p>${t('Nenhum personagem vinculado.')}</p>`}</div>
+  const hiddenCount = Object.keys(campaign.sheets || {}).length - linked.length;
+  const cover = campaign.image ? `<img src="${escapeHtml(campaign.image)}" alt="">` : '<span class="cover-placeholder"><img src="./images/eye-mark.png" alt=""></span>';
+  $('campaign-detail').innerHTML = `<div class="panel campaign-detail"><div class="campaign-hero"><div class="campaign-cover">${cover}${owner ? `<label class="cover-upload" for="campaign-image-input">${t(campaign.image ? 'Trocar foto' : 'Adicionar foto')}</label><input id="campaign-image-input" type="file" accept="image/*" hidden>` : ''}</div><div class="campaign-info"><span class="campaign-role">${owner ? t('Você criou esta campanha') : t('Você participa desta campanha')}</span><h2>${escapeHtml(campaign.name)}</h2>${owner ? `<label class="campaign-desc-edit"><span>${t('Descrição')}</span><textarea id="campaign-description" maxlength="1000" rows="3" placeholder="${t('Tom, cenário, horário das sessões… aparece no convite.')}">${escapeHtml(campaign.description || '')}</textarea></label>` : campaign.description ? `<p class="campaign-desc">${escapeHtml(campaign.description)}</p>` : ''}<div class="campaign-invite-row"><button type="button" class="button outline small" id="copy-campaign">${t('Copiar link de convite')}</button><small>${t('Código')}: <code>${escapeHtml(campaignId)}</code></small>${owner ? `<button type="button" class="text-button danger campaign-delete" id="delete-campaign">${t('Excluir campanha')}</button>` : ''}</div></div></div>
+    <h3>${t('Personagens vinculados')}</h3><div class="campaign-roster">${linked.map(({id,uid,c,img}) => `<div class="roster-card"><a class="roster-open" href="${sheetUrl(uid,id)}" title="${escapeHtml(t('Abrir ficha'))}"><img src="${img ? escapeHtml(img) : artFor(c.archetype)}" alt=""><span><strong>${escapeHtml(c.name || t('Caçador sem nome'))}</strong><small>${escapeHtml(t(c.archetype))}</small></span></a>${uid === user.uid ? `<button type="button" class="roster-unlink" data-unlink="${escapeHtml(id)}">${t('Desvincular')}</button>` : ''}</div>`).join('')}${hiddenCount ? `<div class="roster-card roster-hidden"><span class="roster-lock">🔒</span><span><strong>${hiddenCount} ${hiddenCount === 1 ? t('caçador de outro jogador') : t('caçadores de outros jogadores')}</strong><small>${t('Fichas privadas: só o mestre vê.')}</small></span></div>` : ''}${!linked.length && !hiddenCount ? `<div class="roster-empty"><span class="roster-empty-mark"><img src="./images/eye-mark.png" alt=""></span><div><strong>${t('Nenhum caçador na campanha ainda')}</strong><p>${owner ? t('Vincule um caçador seu abaixo ou mande o link de convite para os jogadores.') : t('Vincule um caçador seu abaixo para entrar na caçada.')}</p></div></div>` : ''}</div>
     <form id="link-sheet-form"><label for="link-sheet">${t('Vincular meu personagem')}</label><select id="link-sheet" ${available.length ? '' : 'disabled'}>${available.map(([id,c]) => `<option value="${escapeHtml(id)}">${escapeHtml(c.name || t('Caçador sem nome'))}</option>`).join('')}</select><button type="submit" class="button primary" ${available.length ? '' : 'disabled'}>${t('Vincular')}</button></form></div>
     <section id="battle-panel" class="panel battle-panel"></section>`;
-  battleCtx = { campaignId, owner, battle: campaign.battle || {}, hunters: Object.fromEntries(linked.map((h) => [h.id, h])) };
+  battleCtx = { campaignId, owner, campaign, battle: campaign.battle || {}, monsters: {}, hunters: Object.fromEntries(linked.map((h) => [h.id, h])) };
   renderBattle();
+  if (owner) {
+    syncInvite(campaignId, campaign);
+    if (campaign.battle?.monsters) update(ref(db), Object.fromEntries([...Object.entries(campaign.battle.monsters).map(([mid,m]) => [`campaignSecrets/${campaignId}/monsters/${mid}`, m]), [`campaigns/${campaignId}/battle/monsters`, null]])).catch(() => {});
+    campaignListeners.push(onValue(ref(db,`campaignSecrets/${campaignId}/monsters`), (snap) => { if (battleCtx?.campaignId !== campaignId) return; battleCtx.monsters = snap.val() || {}; renderBattle(); }, () => {}));
+  }
   campaignListeners.push(onValue(ref(db,`campaigns/${campaignId}/battle`), (snap) => { if (battleCtx?.campaignId !== campaignId) return; battleCtx.battle = snap.val() || {}; renderBattle(); }, () => {}));
   for (const h of linked) campaignListeners.push(onValue(ref(db,charPath(h.id,h.uid)), (snap) => { const hunter = battleCtx?.campaignId === campaignId && battleCtx.hunters[h.id]; if (!hunter || !snap.exists()) return; hunter.c = snap.val(); renderBattle(); }, () => {}));
 }
@@ -226,7 +285,7 @@ const battleStats = () => stats.map((s,i) => `<option value="${i}">${t(s)}</opti
 const harmBoxes = (kind, id, value, max, editable, act = 'harm') => `<div class="battle-track">${Array.from({length:max},(_,i) => `<button type="button" class="${i < value ? 'filled' : ''}" data-act="${act}" data-kind="${kind}" data-id="${escapeHtml(id)}" data-value="${i+1}" ${editable ? '' : 'disabled'} aria-label="${i+1}/${max}">${i < value ? '×' : ''}</button>`).join('')}</div>`;
 function renderBattle() {
   const panel = $('battle-panel'); if (!panel || !battleCtx) return;
-  const { owner, battle, hunters } = battleCtx; const monsters = battle.monsters || {}; const armor = battle.armor || {};
+  const { owner, battle, hunters } = battleCtx; const monsters = owner ? battleCtx.monsters || {} : {}; const armor = battle.armor || {};
   const active = document.activeElement; const focus = active && panel.contains(active) && active.id ? { id: active.id, value: active.value } : null;
   const hunterCards = Object.values(hunters).map(({id,c,img}) => {
     const harm = Number(c.harm) || 0; const luck = Number(c.luck) || 0; const state = harm >= 7 ? t('Morrendo') : harm >= 4 || c.unstable ? t('Instável') : harm ? t('Ferido') : t('Ileso');
@@ -245,9 +304,9 @@ function renderBattle() {
   }).join('');
   const log = battleLog.filter((l) => l.campaignId === battleCtx.campaignId).slice(-8).reverse();
   panel.innerHTML = `<div class="battle-head"><div><span class="eyebrow">${t('Mestre')}</span><h2>${t('Simulador de batalha')}</h2><p>${owner ? t('Clique nas caixas para marcar dano e sorte. O dano aplicado já desconta a armadura.') : t('Acompanhe a batalha. Só quem criou a campanha pode editar.')}</p></div><div class="round-box"><span>${t('Rodada')}</span><strong>${Number(battle.round) || 1}</strong>${owner ? `<div><button type="button" class="button outline small" data-act="round" data-value="-1" aria-label="${t('Rodada anterior')}">−</button><button type="button" class="button outline small" data-act="round" data-value="1" aria-label="${t('Próxima rodada')}">+</button></div>` : ''}</div></div>
-    <div class="battle-columns"><div><h3>${t('Caçadores')}</h3><div class="combatants">${hunterCards || `<p class="battle-empty">${t('Vincule personagens para que eles entrem na batalha.')}</p>`}</div></div>
-    <div><h3>${t('Ameaças')}</h3><div class="combatants">${monsterCards || `<p class="battle-empty">${t('Nenhum monstro em cena.')}</p>`}</div>
-    ${owner ? `<form id="monster-form" class="monster-form"><input id="monster-name" maxlength="60" required placeholder="${t('Nome (ex.: Lobisomem)')}"><label>${t('Capacidade de dano')} <input id="monster-harm" type="number" min="1" max="20" value="8"></label><label>${t('Armadura')} <input id="monster-armor" type="number" min="0" max="5" value="0"></label><input id="monster-attack" maxlength="60" placeholder="${t('Ataque (ex.: Garras 3-dano)')}"><label class="check-row"><input id="monster-minion" type="checkbox"> ${t('Capanga')}</label><button type="submit" class="button primary small">${t('Adicionar ameaça')}</button></form>` : ''}</div></div>
+    <div class="battle-columns ${owner ? '' : 'single'}"><div><h3>${t('Caçadores')}</h3><div class="combatants">${hunterCards || `<p class="battle-empty">${t('Vincule personagens para que eles entrem na batalha.')}</p>`}</div></div>
+    ${owner ? `<div><h3>${t('Ameaças')} <span class="secret-tag">${t('só você vê')}</span></h3><div class="combatants">${monsterCards || `<p class="battle-empty">${t('Nenhum monstro em cena.')}</p>`}</div>
+    <form id="monster-form" class="monster-form"><input id="monster-name" maxlength="60" required placeholder="${t('Nome (ex.: Lobisomem)')}"><label>${t('Capacidade de dano')} <input id="monster-harm" type="number" min="1" max="20" value="8"></label><label>${t('Armadura')} <input id="monster-armor" type="number" min="0" max="5" value="0"></label><input id="monster-attack" maxlength="60" placeholder="${t('Ataque (ex.: Garras 3-dano)')}"><label class="check-row"><input id="monster-minion" type="checkbox"> ${t('Capanga')}</label><button type="submit" class="button primary small">${t('Adicionar ameaça')}</button></form></div>` : ''}</div>
     <div class="battle-foot"><ol class="battle-log">${log.map((l) => `<li>${escapeHtml(l.text)}</li>`).join('') || `<li class="muted">${t('As rolagens e o dano aplicado aparecem aqui.')}</li>`}</ol>${owner ? `<button type="button" class="text-button danger" data-act="end">${t('Encerrar batalha')}</button>` : ''}</div>`;
   if (focus && $(focus.id)) { $(focus.id).value = focus.value; $(focus.id).focus(); }
 }
@@ -259,6 +318,9 @@ async function setHunter(id, changes) {
   Object.assign(h.c, changes); renderBattle();
   try { await update(ref(db), paths); if (characters[id]) Object.assign(characters[id], changes); } catch (error) { toast(errText(error)); }
 }
+async function setMonster(path, value) {
+  try { await update(ref(db), { [`campaignSecrets/${battleCtx.campaignId}/monsters/${path}`]: value }); } catch (error) { toast(errText(error)); }
+}
 async function setBattle(path, value) {
   try { await update(ref(db), { [`campaigns/${battleCtx.campaignId}/battle/${path}`]: value }); } catch (error) { toast(errText(error)); }
 }
@@ -266,11 +328,11 @@ const hitText = (name, raw, armor, delta) => `${name}: ${raw} ${t('de dano')}${a
 $('campaign-detail').addEventListener('click', async (event) => {
   const button = event.target.closest('[data-act]'); if (!button || !battleCtx?.owner || button.disabled) return;
   const { act, kind, id } = button.dataset; const value = Number(button.dataset.value);
-  const monster = battleCtx.battle.monsters?.[id]; const hunter = battleCtx.hunters[id];
+  const monster = battleCtx.monsters?.[id]; const hunter = battleCtx.hunters[id];
   const name = monster && (kind === 'monster' || act === 'remove') ? monster.name : hunter?.c.name || t('Caçador sem nome');
   if (act === 'harm' && kind === 'hunter' && hunter) { const harm = (Number(hunter.c.harm) || 0) === value ? value - 1 : value; await setHunter(id, harm >= 4 ? { harm, unstable: true } : { harm }); }
   else if (act === 'luck' && hunter) { const luck = (Number(hunter.c.luck) || 0) === value ? value - 1 : value; await setHunter(id, { luck }); }
-  else if (act === 'harm' && kind === 'monster' && monster) { const harm = (Number(monster.harm) || 0) === value ? value - 1 : value; await setBattle(`monsters/${id}/harm`, harm); }
+  else if (act === 'harm' && kind === 'monster' && monster) { const harm = (Number(monster.harm) || 0) === value ? value - 1 : value; await setMonster(`${id}/harm`, harm); }
   else if (act === 'hit' || act === 'heal') {
     const raw = Math.max(0, Number($(`hit-${id}`)?.value) || 0);
     const armor = act === 'heal' ? 0 : kind === 'monster' ? Number(monster?.armor) || 0 : Number(battleCtx.battle.armor?.[id]) || 0;
@@ -278,7 +340,7 @@ $('campaign-detail').addEventListener('click', async (event) => {
     if (kind === 'monster' && monster) {
       const max = Number(monster.harmMax) || 7; const harm = Math.min(max, Math.max(0, (Number(monster.harm) || 0) + delta));
       logBattle(act === 'heal' ? `${name}: ${t('curou 1 de dano')}` : `${hitText(name, raw, armor, delta)}${harm >= max ? ` · ${t('Derrotado')}` : ''}`);
-      await setBattle(`monsters/${id}/harm`, harm);
+      await setMonster(`${id}/harm`, harm);
     } else if (hunter) {
       const harm = Math.min(7, Math.max(0, (Number(hunter.c.harm) || 0) + delta));
       logBattle(act === 'heal' ? `${name}: ${t('curou 1 de dano')}` : `${hitText(name, raw, armor, delta)}${harm >= 7 ? ` · ${t('Morrendo')}` : ''}`);
@@ -293,20 +355,39 @@ $('campaign-detail').addEventListener('click', async (event) => {
     logBattle(`${name} · ${t(stats[stat])}: ${dice[0]} + ${dice[1]} ${bonus >= 0 ? '+' : '−'} ${Math.abs(bonus)} = ${total} (${t(total >= 10 ? 'Sucesso total' : total >= 7 ? 'Sucesso com complicação' : 'Marque experiência')})`); renderBattle();
   }
   else if (act === 'round') await setBattle('round', Math.max(1, (Number(battleCtx.battle.round) || 1) + value));
-  else if (act === 'remove' && monster) { if (await confirmDialog({ title: t('Remover ameaça?'), message: monster.name, confirm: t('Remover'), danger: true })) await setBattle(`monsters/${id}`, null); }
+  else if (act === 'remove' && monster) { if (await confirmDialog({ title: t('Remover ameaça?'), message: monster.name, confirm: t('Remover'), danger: true })) await setMonster(id, null); }
   else if (act === 'end') {
     if (!await confirmDialog({ title: t('Encerrar batalha?'), message: t('As ameaças e a rodada serão apagadas. O dano e a sorte dos caçadores continuam nas fichas.'), confirm: t('Encerrar'), danger: true })) return;
     battleLog = battleLog.filter((l) => l.campaignId !== battleCtx.campaignId);
-    try { await set(ref(db,`campaigns/${battleCtx.campaignId}/battle`), null); } catch (error) { toast(errText(error)); }
+    try { await update(ref(db), { [`campaigns/${battleCtx.campaignId}/battle`]: null, [`campaignSecrets/${battleCtx.campaignId}/monsters`]: null }); } catch (error) { toast(errText(error)); }
   }
+});
+$('campaign-detail').addEventListener('click', async (event) => {
+  if (!event.target.closest('#delete-campaign') || !battleCtx?.owner) return;
+  const { campaignId, campaign } = battleCtx;
+  if (!await confirmDialog({ title: t('Excluir campanha?'), message: `${campaign.name}: ${t('a campanha, o convite e as ameaças serão apagados para sempre. Os caçadores continuam existindo, só saem da campanha.')}`, confirm: t('Excluir campanha'), danger: true })) return;
+  const changes = { [`campaigns/${campaignId}`]: null, [`campaignInvites/${campaignId}`]: null, [`campaignSecrets/${campaignId}`]: null, [`users/${user.uid}/campaigns/${campaignId}`]: null };
+  for (const { id: sheetId, uid } of Object.values(battleCtx.hunters)) changes[`users/${uid}/characters/${sheetId}/campaignId`] = null;
+  try {
+    await update(ref(db), changes);
+    delete campaignIds[campaignId]; for (const c of Object.values(characters)) if (c.campaignId === campaignId) delete c.campaignId;
+    activeCampaignId = null; stopCampaignListeners(); battleCtx = null; renderCampaigns(); toast(t('Campanha excluída.'));
+  } catch (error) { toast(errText(error)); }
 });
 $('campaign-detail').addEventListener('change', async (event) => {
   const armor = event.target.closest('[data-armor]');
   if (armor && battleCtx?.owner) { await setBattle(`armor/${armor.dataset.armor}`, Math.max(0, Math.min(5, Number(armor.value) || 0))); return; }
+  if (event.target.id === 'campaign-description' && battleCtx?.owner) {
+    const description = event.target.value.trim().slice(0, 1000); const campaignId = battleCtx.campaignId;
+    try { await set(ref(db,`campaigns/${campaignId}/description`), description || null); battleCtx.campaign.description = description; toast(t('Descrição salva.')); } catch (error) { toast(errText(error)); return; }
+    syncInvite(campaignId, battleCtx.campaign);
+    return;
+  }
   if (event.target.id === 'campaign-image-input') {
     const file = event.target.files?.[0]; event.target.value = ''; if (!file || !battleCtx?.owner) return;
     if (!file.type.startsWith('image/')) { toast(t('Selecione uma imagem.')); return; }
-    try { const data = await compressImage(file); await update(ref(db,`campaigns/${battleCtx.campaignId}`), { image: data }); toast(t('Foto da campanha atualizada.')); renderCampaigns(); }
+    const campaignId = battleCtx.campaignId; const cropped = await cropImage(file, { aspect: 16 / 10, labels: cropLabels() }); if (!cropped) return;
+    try { const data = await compressImage(cropped); await set(ref(db,`campaigns/${campaignId}/image`), data); if (battleCtx?.campaign) { battleCtx.campaign.image = data; syncInvite(campaignId, battleCtx.campaign); } toast(t('Foto da campanha atualizada.')); renderCampaigns(); }
     catch (error) { toast(errText(error)); }
   }
 });
@@ -315,14 +396,31 @@ $('campaign-detail').addEventListener('submit', async (event) => {
   const name = $('monster-name').value.trim(); if (!name) return;
   const monster = { name, harmMax: Math.max(1, Math.min(20, Number($('monster-harm').value) || 8)), harm: 0, armor: Math.max(0, Math.min(5, Number($('monster-armor').value) || 0)), attack: $('monster-attack').value.trim(), minion: $('monster-minion').checked, created: Date.now() };
   logBattle(`${t('Entrou em cena')}: ${name}`);
-  await setBattle(`monsters/${crypto.randomUUID()}`, monster);
+  await setMonster(crypto.randomUUID(), monster);
+});
+$('invite-view').addEventListener('change', (event) => { if (event.target.name === 'invite-hunter' && inviteState) { inviteState.choice = event.target.value; renderInvite(); } });
+$('invite-view').addEventListener('click', async (event) => {
+  if (!inviteState) return;
+  if (event.target.closest('#invite-decline')) { leaveInvite(); showLibrary(); return; }
+  if (!event.target.closest('#invite-accept') || inviteState.busy || inviteState.choice === null) return;
+  const { campaignId, choice } = inviteState; inviteState.busy = true; renderInvite();
+  try {
+    await set(ref(db,`campaigns/${campaignId}/members/${user.uid}`), true);
+    await set(ref(db,`users/${user.uid}/campaigns/${campaignId}`), true);
+    campaignIds[campaignId] = true;
+    if (choice && characters[choice] && !characters[choice].campaignId) {
+      await update(ref(db), { [`${charPath(choice)}/campaignId`]: campaignId, [`campaigns/${campaignId}/sheets/${choice}`]: user.uid });
+      characters[choice].campaignId = campaignId;
+    }
+    leaveInvite(); activeCampaignId = campaignId; showCampaigns(); toast(t('Você entrou na campanha.'));
+  } catch (error) { inviteState.busy = false; renderInvite(); toast(errText(error)); }
 });
 $('campaign-list').addEventListener('click', (event) => { const button = event.target.closest('[data-campaign]'); if (button) { activeCampaignId = button.dataset.campaign; renderCampaigns(); } });
 $('create-campaign-form').addEventListener('submit', async (event) => {
   event.preventDefault(); if (!user) return;
   const name = $('campaign-name').value.trim(); if (!name) return;
-  const id = crypto.randomUUID();
-  try { await set(ref(db,`campaigns/${id}`),{name,ownerUid:user.uid,members:{[user.uid]:true}}); await set(ref(db,`users/${user.uid}/campaigns/${id}`),true); campaignIds[id] = true; activeCampaignId = id; $('campaign-name').value = ''; renderCampaigns(); toast(t('Campanha criada.')); }
+  const id = crypto.randomUUID(); const description = $('campaign-new-description').value.trim().slice(0, 1000);
+  try { await set(ref(db,`campaigns/${id}`),{name,ownerUid:user.uid,members:{[user.uid]:true},...(description ? { description } : {})}); await syncInvite(id, { name, description }); $('campaign-new-description').value = ''; await set(ref(db,`users/${user.uid}/campaigns/${id}`),true); campaignIds[id] = true; activeCampaignId = id; $('campaign-name').value = ''; renderCampaigns(); toast(t('Campanha criada.')); }
   catch (error) { toast(errText(error)); }
 });
 $('join-campaign-form').addEventListener('submit', async (event) => {
@@ -368,8 +466,8 @@ function openCharacter(id, preserveRoll = false) {
   const c = characters[id]; if (!c) return;
   const selectedStat = preserveRoll ? $('roll-stat').value : '0';
   if (!preserveRoll) lastRoll = null;
-  activeId = id; $('library-view').classList.add('hidden'); $('campaign-view').classList.add('hidden'); $('sheet-view').classList.remove('hidden'); document.querySelector('.app-tabs').classList.add('hidden');
-  $('save-status').textContent = activeCanEdit ? t('Salvo na nuvem') : t('Somente leitura'); $('sheet-number').textContent = `ID #${id.slice(0,8).toUpperCase()}`;
+  activeId = id; $('library-view').classList.add('hidden'); $('campaign-view').classList.add('hidden'); $('invite-view').classList.add('hidden'); $('sheet-view').classList.remove('hidden'); document.querySelector('.app-tabs').classList.add('hidden');
+  $('save-status').textContent = activeCanEdit ? t('Salvo na nuvem') : t('Somente leitura');
   $('character-name').value = c.name || ''; $('appearance').value = c.appearance || '';
   $('archetype-badge').textContent = t(c.archetype); $('special-label').firstChild.textContent = `${t('Outras anotações do arquétipo')} `;
   for (const key of ['moves','gear','special','history','notes']) $(key).value = c[key] || '';
@@ -398,6 +496,20 @@ function renderRatings() {
 function renderBasicMoves() {
   $('basic-moves').innerHTML = basicHelp.map((description,i) => `<details><summary>${t(moves[i])}</summary><p>${escapeHtml(description[locale === 'en' ? 1 : 0])}</p></details>`).join('');
 }
+$('basic-moves').addEventListener('click', (event) => {
+  const summary = event.target.closest('summary'); if (!summary) return;
+  const details = summary.parentElement; const body = details.querySelector('p');
+  if (!body || details.dataset.animating || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  event.preventDefault(); details.dataset.animating = '1'; body.style.overflow = 'hidden';
+  const done = () => { body.style.overflow = ''; delete details.dataset.animating; };
+  if (details.open) {
+    details.classList.add('closing');
+    body.animate([{ height: `${body.offsetHeight}px`, opacity: 1, marginTop: '10px' }, { height: '0px', opacity: 0, marginTop: '0px' }], { duration: 180, easing: 'ease-in' }).onfinish = () => { details.open = false; details.classList.remove('closing'); done(); };
+  } else {
+    details.open = true; const height = body.offsetHeight;
+    body.animate([{ height: '0px', opacity: 0, marginTop: '0px' }, { height: `${height}px`, opacity: 1, marginTop: '10px' }], { duration: 240, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = done;
+  }
+});
 function renderTracks() {
   const c = characters[activeId];
   for (const [key,count] of [['luck',7],['harm',7],['xp',5]]) $(key+'-track').innerHTML = Array.from({length:count},(_,i) => `<button type="button" data-track="${key}" data-value="${i+1}" class="${i < (Number(c[key])||0) ? 'filled' : ''}" aria-label="${t({luck:'Sorte',harm:'Dano',xp:'Experiência'}[key])} ${i+1} ${locale === 'en' ? 'of' : 'de'} ${count}" aria-pressed="${i < (Number(c[key])||0)}">${i < (Number(c[key])||0) ? '×' : ''}</button>`).join('');
@@ -414,14 +526,16 @@ function renderHuntDetails() {
   const c = characters[activeId]; const defs = huntDetails[c?.archetype] || []; const d = c?.details || {};
   const L = (x) => x?.[locale === 'en' ? 'en' : 'pt'] || '';
   $('hunt-details').innerHTML = defs.map((f) => {
-    if (f.type === 'text') return `<div class="hunt-field ${String(d[f.key] || '').trim() ? 'done' : 'pending'}"><label class="hunt-label" for="hd-${f.key}">${escapeHtml(L(f.label))}</label><textarea id="hd-${f.key}" data-detail-text="${f.key}" rows="3" placeholder="${escapeHtml(L(f.placeholder))}">${escapeHtml(d[f.key] || '')}</textarea></div>`;
+    const help = huntHelp[c.archetype]?.[f.key] || {}; const about = help.about ? `<p class="hunt-about">${escapeHtml(L(help.about))}</p>` : '';
+    if (f.type === 'text') return `<div class="hunt-field ${String(d[f.key] || '').trim() ? 'done' : 'pending'}"><label class="hunt-label" for="hd-${f.key}">${escapeHtml(L(f.label))}</label>${about}<textarea id="hd-${f.key}" data-detail-text="${f.key}" rows="3" placeholder="${escapeHtml(L(f.placeholder))}">${escapeHtml(d[f.key] || '')}</textarea></div>`;
     const sel = Array.isArray(d[f.key]) ? d[f.key] : []; const names = d[`${f.key}_names`] || {};
     const goal = f.min === f.max ? `${f.max}` : f.max >= f.options.length ? `${f.min}+` : `${f.min}–${f.max}`;
     const missing = Math.max(0, f.min - sel.length);
     const status = missing ? `<span class="hunt-status">${locale === 'en' ? `${missing} left` : `falta${missing > 1 ? 'm' : ''} ${missing}`}</span>` : '<span class="hunt-status ok">✓</span>';
-    const chips = f.options.map((opt,i) => { const on = sel.includes(opt.pt); const full = !on && f.max > 1 && sel.length >= f.max; return `<label class="hunt-chip"><input type="checkbox" data-detail="${f.key}" data-index="${i}" ${on ? 'checked' : ''} ${full ? 'disabled' : ''}><span>${escapeHtml(L(opt))}</span></label>`; }).join('');
+    const chips = f.options.map((opt,i) => { const on = sel.includes(opt.pt); const full = !on && f.max > 1 && sel.length >= f.max; const desc = help.options?.[opt.pt]; return `<label class="hunt-chip"${desc ? ` title="${escapeHtml(L(desc))}"` : ''}><input type="checkbox" data-detail="${f.key}" data-index="${i}" ${on ? 'checked' : ''} ${full ? 'disabled' : ''}><span>${escapeHtml(L(opt))}</span></label>`; }).join('');
+    const effects = help.options ? f.options.filter((opt) => sel.includes(opt.pt) && help.options[opt.pt]).map((opt) => `<li><strong>${escapeHtml(L(opt))}:</strong> ${escapeHtml(L(help.options[opt.pt]))}</li>`).join('') : '';
     const named = f.named ? f.options.map((opt,i) => sel.includes(opt.pt) ? `<label class="hunt-name"><span>${escapeHtml(L(opt))}</span><input data-detail-name="${f.key}" data-index="${i}" maxlength="120" placeholder="${escapeHtml(L(f.namePlaceholder))}" value="${escapeHtml(names['o'+i] || '')}"></label>` : '').join('') : '';
-    return `<fieldset class="hunt-field ${missing ? 'pending' : 'done'}"><legend><span class="hunt-label">${escapeHtml(L(f.label))}</span><span class="hunt-goal">${t('Escolha')} ${goal}</span>${status}</legend>${f.hint ? `<p class="hunt-hint">${escapeHtml(L(f.hint))}</p>` : ''}<div class="hunt-options">${chips}</div>${named ? `<div class="hunt-names">${named}</div>` : ''}</fieldset>`;
+    return `<fieldset class="hunt-field ${missing ? 'pending' : 'done'}"><legend><span class="hunt-label">${escapeHtml(L(f.label))}</span><span class="hunt-goal">${t('Escolha')} ${goal}</span>${status}</legend>${about}${f.hint ? `<p class="hunt-hint">${escapeHtml(L(f.hint))}</p>` : ''}<div class="hunt-options">${chips}</div>${effects ? `<ul class="hunt-effects">${effects}</ul>` : help.options ? `<p class="hunt-tip">${t('Passe o mouse numa opção para ver o efeito.')}</p>` : ''}${named ? `<div class="hunt-names">${named}</div>` : ''}</fieldset>`;
   }).join('');
   if (!activeCanEdit) for (const input of $('hunt-details').querySelectorAll('input,textarea')) input.disabled = true;
 }
@@ -485,7 +599,7 @@ function shareCharacter(id) {
   dialog.addEventListener('close', () => dialog.remove());
 }
 $('share-character').addEventListener('click', () => shareCharacter(activeId));
-$('portrait-input').addEventListener('change', async (event) => { const file = event.target.files?.[0]; event.target.value = ''; if (!file || !activeId || !activeCanEdit) return; if (!file.type.startsWith('image/')) { toast(t('Selecione uma imagem.')); return; } const id = activeId; const uid = activeOwnerUid; try { $('save-status').textContent = t('Comprimindo imagem…'); const data = await compressImage(file); await set(ref(db,imagePath(id,uid)),data); images[id] = data; renderPortrait(); $('save-status').textContent = t('Retrato salvo na nuvem'); toast(t('Retrato atualizado.')); } catch (error) { $('save-status').textContent = t('Erro ao salvar imagem'); toast(errText(error)); } });
+$('portrait-input').addEventListener('change', async (event) => { const file = event.target.files?.[0]; event.target.value = ''; if (!file || !activeId || !activeCanEdit) return; if (!file.type.startsWith('image/')) { toast(t('Selecione uma imagem.')); return; } const id = activeId; const uid = activeOwnerUid; const cropped = await cropImage(file, { aspect: 1, labels: cropLabels() }); if (!cropped) return; try { $('save-status').textContent = t('Comprimindo imagem…'); const data = await compressImage(cropped); await set(ref(db,imagePath(id,uid)),data); images[id] = data; renderPortrait(); $('save-status').textContent = t('Retrato salvo na nuvem'); toast(t('Retrato atualizado.')); } catch (error) { $('save-status').textContent = t('Erro ao salvar imagem'); toast(errText(error)); } });
 
 async function compressImage(file) {
   const bitmap = await createImageBitmap(file);

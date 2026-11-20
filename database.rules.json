@@ -6,14 +6,14 @@
         ".write": "auth != null && auth.uid === $uid",
         "characters": {
           "$id": {
-            ".read": "data.child('shareMode').val() === 'read' || data.child('shareMode').val() === 'edit' || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('members').child(auth.uid).val() === true)",
-            ".write": "data.exists() && newData.hasChildren(['archetype', 'ratings']) && ((data.child('shareMode').val() === 'edit') || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('ownerUid').val() === auth.uid)) && newData.child('shareMode').val() === data.child('shareMode').val() && newData.child('campaignId').val() === data.child('campaignId').val()",
+            ".read": "data.child('shareMode').val() === 'read' || data.child('shareMode').val() === 'edit' || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('ownerUid').val() === auth.uid)",
+            ".write": "data.exists() && newData.hasChildren(['archetype', 'ratings']) && ((data.child('shareMode').val() === 'edit') || (auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('ownerUid').val() === auth.uid)) && newData.child('shareMode').val() === data.child('shareMode').val() && (newData.child('campaignId').val() === data.child('campaignId').val() || (!newData.child('campaignId').exists() && auth != null && data.child('campaignId').exists() && root.child('campaigns').child(data.child('campaignId').val()).child('ownerUid').val() === auth.uid))",
             ".validate": "newData.hasChildren(['archetype', 'ratings']) && (!newData.child('shareMode').exists() || newData.child('shareMode').val() === 'read' || newData.child('shareMode').val() === 'edit') && (!newData.child('campaignId').exists() || root.child('campaigns').child(newData.child('campaignId').val()).child('members').child($uid).val() === true)"
           }
         },
         "images": {
           "$id": {
-            ".read": "root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'read' || root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'edit' || (auth != null && root.child('users').child($uid).child('characters').child($id).child('campaignId').exists() && root.child('campaigns').child(root.child('users').child($uid).child('characters').child($id).child('campaignId').val()).child('members').child(auth.uid).val() === true)",
+            ".read": "root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'read' || root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'edit' || (auth != null && root.child('users').child($uid).child('characters').child($id).child('campaignId').exists() && root.child('campaigns').child(root.child('users').child($uid).child('characters').child($id).child('campaignId').val()).child('ownerUid').val() === auth.uid)",
             ".write": "root.child('users').child($uid).child('characters').child($id).child('shareMode').val() === 'edit' || (auth != null && root.child('users').child($uid).child('characters').child($id).child('campaignId').exists() && root.child('campaigns').child(root.child('users').child($uid).child('characters').child($id).child('campaignId').val()).child('ownerUid').val() === auth.uid)",
             ".validate": "newData.isString() && newData.val().matches(/^data:image\\/webp;base64,[A-Za-z0-9+/=]+$/) && newData.val().length <= 1000000"
           }
@@ -23,7 +23,7 @@
     "campaigns": {
       "$id": {
         ".read": "auth != null && data.child('members').child(auth.uid).val() === true",
-        ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() === auth.uid && newData.child('members').child(auth.uid).val() === true) || (data.child('ownerUid').val() === auth.uid && newData.child('ownerUid').val() === auth.uid))",
+        ".write": "auth != null && ((!data.exists() && newData.child('ownerUid').val() === auth.uid && newData.child('members').child(auth.uid).val() === true) || (data.child('ownerUid').val() === auth.uid && (!newData.exists() || newData.child('ownerUid').val() === auth.uid)))",
         ".validate": "newData.hasChildren(['name', 'ownerUid', 'members']) && newData.child('name').isString() && newData.child('name').val().length <= 80",
         "members": {
           "$memberUid": {
@@ -42,7 +42,35 @@
         },
         "battle": {
           ".validate": "newData.hasChildren()"
+        },
+        "description": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
         }
+      }
+    },
+    "campaignInvites": {
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth != null && (root.child('campaigns').child($id).child('ownerUid').val() === auth.uid || newData.parent().parent().child('campaigns').child($id).child('ownerUid').val() === auth.uid)",
+        ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 80",
+        "description": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
+        },
+        "image": {
+          ".validate": "newData.isString() && newData.val().matches(/^data:image\\/webp;base64,[A-Za-z0-9+/=]+$/) && newData.val().length <= 1000000"
+        },
+        "ownerName": {
+          ".validate": "newData.isString() && newData.val().length <= 120"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "campaignSecrets": {
+      "$id": {
+        ".read": "auth != null && root.child('campaigns').child($id).child('ownerUid').val() === auth.uid",
+        ".write": "auth != null && root.child('campaigns').child($id).child('ownerUid').val() === auth.uid"
       }
     }
   }

@@ -43,16 +43,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(max-width:650px){.auth-layout{padding:35px 20px 65px}.auth-layout:before{top:0;left:0;width:100%;height:400px;opacity:.12}.hero-copy{min-height:390px;padding:0}.hero-copy h1{font-size:clamp(52px,12vw,78px)}.hero-copy p{font-size:16px}.hero-rule{margin-top:30px}.image-credit{left:0}.auth-card{box-shadow:7px 7px 0 #d6cec0}.topbar{height:66px}}
 .hero-dash{color:#a53c30;white-space:nowrap}
 .auth-card h2{margin-top:0}
-.auth-layout.signup{background:#e6e5df}
-.auth-layout.signup .hero-dash{color:#35443d}
-.auth-layout.signup .auth-card{border-top:5px solid #35443d;box-shadow:12px 12px 0 #c7c9c1}
-.auth-layout.signup .button.primary{background:#35443d}
-.auth-layout.signup .button.primary:hover{background:#26342d}
+.auth-layout.signup .hero-dash{color:#a43d30}
+.auth-layout.signup .auth-card{border-top:5px solid #a43d30;box-shadow:12px 12px 0 #d6cec0}
+.auth-layout.signup .button.primary{background:#a43d30}
+.auth-layout.signup .button.primary:hover{background:#802c23}
 .password-field{position:relative}
 .auth-card .password-field input{padding-right:90px}
 .password-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#88372d;padding:8px;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .password-toggle:hover{color:#5e251d}
-@media(max-width:650px){.auth-layout.signup .auth-card{box-shadow:7px 7px 0 #c7c9c1}}
+@media(max-width:650px){.auth-layout.signup .auth-card{box-shadow:7px 7px 0 #d6cec0}}
 body:has(#auth-view:not(.hidden)){overflow-y:hidden}
 .corner-tools{position:absolute;top:22px;right:clamp(20px,5vw,76px);z-index:5;display:flex;align-items:center;gap:16px;color:#5e554b;font-size:13px}
 .corner-tools #user-label{max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -252,3 +251,156 @@ div.hunt-field .hunt-label{margin-bottom:10px}
 .combat-actions input{padding:0 8px}.combat-actions select{padding:0 8px}
 .combat-actions label{align-self:center}
 .round-box .button{height:32px;padding:0 12px}
+/* Enquanto o Firebase restaura a sessão salva, não mostra login nem app */
+body.auth-pending #auth-view,body.auth-pending #app-view,body.auth-pending .corner-tools{visibility:hidden}
+body.auth-pending main{min-height:100vh;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23a43d30' stroke-width='3' stroke-dasharray='70 40'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='.9s' repeatCount='indefinite'/%3E%3C/circle%3E%3C/svg%3E") center/40px no-repeat}
+.panel-head+.track{border-top:0}
+/* Cabeçalho do app: logo e ferramentas do canto na mesma faixa de 44px */
+@media(min-width:651px){
+  .app-identity{height:44px;font-size:22px}
+  .app-identity img{height:36px}
+  body:has(#app-view:not(.hidden)) .corner-tools{top:34px;height:44px;align-items:center}
+}
+.hunt-about{clear:both;margin:0 0 12px;color:#4a4138;font-size:14px;line-height:1.55;max-width:760px}
+.hunt-hint{color:#7a6f62;font-style:italic}
+.hunt-effects{list-style:none;margin:12px 0 0;padding:10px 12px;border-left:2px solid #c9a59c;background:#fffdf7;display:grid;gap:4px;font-size:14px;color:#4a4138;line-height:1.45;animation:fade-in .2s ease-out}
+.hunt-effects strong{color:#29241f}
+.hunt-tip{margin:10px 0 0;font-size:12px;color:#8a7f72}
+@keyframes fade-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.crop-dialog{width:min(560px,calc(100vw - 32px))}
+.crop-frame{position:relative;margin:16px auto 0;overflow:hidden;background:#29241f;cursor:grab;touch-action:none;user-select:none;border:1px solid #29241f}
+.crop-frame.dragging{cursor:grabbing}
+.crop-frame img{position:absolute;left:0;top:0;max-width:none;transform-origin:0 0;pointer-events:none}
+.crop-grid{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#fff3,#fff3) 33.33% 0/1px 100% no-repeat,linear-gradient(#fff3,#fff3) 66.66% 0/1px 100% no-repeat,linear-gradient(#fff3,#fff3) 0 33.33%/100% 1px no-repeat,linear-gradient(#fff3,#fff3) 0 66.66%/100% 1px no-repeat;box-shadow:inset 0 0 0 2px #fffdf7aa;opacity:0;transition:opacity .15s}
+.crop-frame:hover .crop-grid,.crop-frame.dragging .crop-grid{opacity:1}
+.crop-zoom{display:flex!important;align-items:center;gap:12px;margin:16px 0 0!important;font-size:13px}
+.crop-zoom input{flex:1;accent-color:#a43d30;padding:0;border:0;background:none}
+/* Campanhas como cartões grandes com foto */
+.campaign-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin:24px 0}
+.campaign-list .campaign-card{display:flex;flex-direction:column;padding:0;text-align:left;border:1px solid #c5bbae;background:#faf8f1;color:#29241f;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.campaign-list .campaign-card:hover{transform:translateY(-3px);border-color:#a43d30;box-shadow:6px 6px 0 #d6cec0}
+.campaign-list .campaign-card.selected{border-color:#a43d30;box-shadow:6px 6px 0 #a43d3033}
+.campaign-card-cover{display:flex;align-items:center;justify-content:center;aspect-ratio:16/10;background:#e6dfd2;overflow:hidden;border-bottom:1px solid #c5bbae}
+.campaign-list .campaign-card-cover img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.campaign-card:hover .campaign-card-cover img{transform:scale(1.04)}
+.campaign-card-body{display:flex;flex-direction:column;gap:4px;padding:14px 16px}
+.campaign-card-body strong{font:22px 'Special Elite',Georgia,serif}
+.campaign-card-body small{color:#6f665b;font-size:13px}
+.campaign-card.selected .campaign-card-body strong{color:#8e382d}
+.campaign-empty{color:#6f665b}
+/* Foto da campanha: botão aparece só no hover */
+.campaign-cover{width:300px;height:auto;aspect-ratio:16/10}
+.campaign-cover img{transition:transform .35s,filter .25s}
+.cover-upload{transform:translateY(100%);opacity:0;transition:transform .22s ease-out,opacity .22s ease-out}
+.campaign-cover:hover .cover-upload,.campaign-cover:focus-within .cover-upload{transform:none;opacity:1}
+.campaign-cover:hover img{transform:scale(1.03);filter:brightness(.92)}
+@media(hover:none){.cover-upload{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.cover-upload,.campaign-cover img,.campaign-card,.campaign-card-cover img{transition:none}}
+@media(max-width:650px){.campaign-cover{width:100%}}
+.basic-moves summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.basic-moves summary::-webkit-details-marker{display:none}
+.basic-moves summary::after{content:'+';flex:none;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:1px solid #b8ad9e;color:#8e382d;font-size:16px;line-height:1;transition:transform .22s ease,background .22s,color .22s}
+.basic-moves details[open]:not(.closing) summary::after{transform:rotate(45deg);background:#a43d30;color:#fffdf7;border-color:#a43d30}
+.basic-moves summary:hover{color:#8e382d}
+/* Hover das campanhas sem deslocar nada */
+.campaign-list .campaign-card:hover{transform:none;box-shadow:none}
+.campaign-card:hover .campaign-card-cover img,.campaign-cover:hover img{transform:none}
+.campaign-list .campaign-card.selected{box-shadow:none}
+/* Botão de trocar retrato: só no hover */
+.portrait-wrap .portrait-upload{transform:translateY(100%);opacity:0;transition:transform .22s ease-out,opacity .22s ease-out}
+.portrait-wrap:hover .portrait-upload,.portrait-wrap:focus-within .portrait-upload{transform:none;opacity:1}
+.portrait-wrap img{transition:filter .25s}.portrait-wrap:hover img{filter:grayscale(1) brightness(.9)}
+@media(hover:none){.portrait-wrap .portrait-upload{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.portrait-wrap .portrait-upload{transition:none}}
+/* Descrição da campanha */
+.campaign-desc{margin:0 0 12px;color:#4a4138;line-height:1.6;white-space:pre-line;max-width:640px}
+.campaign-desc-edit{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6f665b;max-width:640px}
+.campaign-desc-edit textarea{text-transform:none;letter-spacing:0;font-weight:400;font-size:15px;padding:10px 12px;border:1px solid #c5bbae;background:#fffdf7;color:#29241f;resize:vertical}
+.campaign-invite-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.campaign-invite-row .button{margin-top:0}
+.campaign-invite-row small{color:#6f665b}
+.campaign-info{flex:1}
+#campaign-new-description{width:100%;padding:13px;border:1px solid #b8aa98;background:#fff;color:#2e2923;font:inherit;resize:vertical}
+.secret-tag{font:700 11px 'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8e382d;border:1px dashed #a43d30;padding:3px 7px;vertical-align:middle;margin-left:6px}
+.battle-columns.single{grid-template-columns:1fr}
+/* Página de convite */
+.invite-view{display:flex;justify-content:center;padding:10px 0 40px}
+.invite-loading{padding:80px 0;color:#6f665b}
+.invite-card{width:min(860px,100%);background:#faf8f1;border:1px solid #c5bbae;box-shadow:12px 12px 0 #d6cec0;overflow:hidden;animation:dialog-in .25s ease-out}
+.invite-cover{aspect-ratio:16/7;background:#29241f;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.invite-cover img{width:100%;height:100%;object-fit:cover}
+.invite-cover .cover-placeholder{color:#a48f73;font-size:80px}
+.invite-body{padding:clamp(22px,4vw,40px)}
+.invite-body h1{font:clamp(36px,5vw,58px)/1.05 'Special Elite',Georgia,serif;margin:8px 0 10px;color:#29241f}
+.invite-owner{margin:0 0 8px;color:#8e382d;font-weight:700}
+.invite-desc{margin:0 0 8px;color:#4a4138;line-height:1.6;white-space:pre-line;max-width:680px}
+.invite-body h2{font:24px 'Special Elite',Georgia,serif;margin:28px 0 14px;color:#29241f}
+.invite-hunters{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.invite-hunter{position:relative;display:flex;align-items:center;gap:12px;padding:10px;border:1px solid #c5bbae;background:#fffdf7;cursor:pointer;transition:border-color .15s,background .15s}
+.invite-hunter input{position:absolute;opacity:0;pointer-events:none}
+.invite-hunter img,.invite-hunter .none-mark{width:60px;height:60px;flex:none;object-fit:cover;object-position:center 30%;filter:grayscale(1);border:1px solid #c5bbae}
+.invite-hunter .none-mark{display:flex;align-items:center;justify-content:center;font-size:26px;color:#8e382d;filter:none;background:#f4f0e7}
+.invite-hunter span{display:flex;flex-direction:column;min-width:0}
+.invite-hunter strong{font:18px 'Special Elite',Georgia,serif;color:#29241f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.invite-hunter small{color:#6f665b;font-size:13px}
+.invite-hunter:hover{border-color:#a43d30}
+.invite-hunter:has(input:checked){border-color:#a43d30;background:#f4e5dd;box-shadow:inset 0 0 0 1px #a43d30}
+.invite-hunter:has(input:checked) img{filter:none}
+.invite-hunter:has(input:focus-visible){outline:2px solid #a43d30;outline-offset:2px}
+.invite-hunter.disabled{opacity:.5;cursor:not-allowed}
+.invite-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:20px;border-top:1px solid #e1d8ca}
+.invite-actions .button{margin-top:0}
+@media(max-width:650px){.invite-card{box-shadow:6px 6px 0 #d6cec0}.invite-actions .button{flex:1}}
+/* "+" desenhado com duas barras, sempre no centro exato da caixa */
+.basic-moves summary::after{content:'';box-sizing:border-box;background-image:linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor);background-size:10px 2px,2px 10px;background-position:center;background-repeat:no-repeat}
+.basic-moves details[open]:not(.closing) summary::after{background-color:#a43d30;background-image:linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor);background-size:10px 2px,2px 10px;background-position:center;background-repeat:no-repeat}
+/* Login/cadastro: "English" alinhado com a borda direita do cartão, não com a janela */
+@media(min-width:951px){
+  body:has(#auth-view:not(.hidden)) .corner-tools{left:0;right:0;max-width:1480px;margin:0 auto;padding:0 clamp(24px,6vw,110px);justify-content:flex-end;pointer-events:none}
+  body:has(#auth-view:not(.hidden)) .corner-tools>*{pointer-events:auto}
+}
+#user-label:empty{display:none}
+/* Explicação das campanhas */
+.campaign-rules{list-style:none;margin:-18px 0 26px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.campaign-rules li{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-left:3px solid #a43d30;background:#faf8f1;font-size:14px;line-height:1.5;color:#4a4138}
+.campaign-rules strong{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8e382d}
+@media(max-width:950px){.campaign-rules{grid-template-columns:1fr}}
+/* Cartões de campanha: nome mais perto da borda */
+.campaign-card-body{padding:12px 14px 14px 12px}
+/* Personagens vinculados */
+.roster-card{justify-content:space-between}
+.roster-unlink{align-self:stretch;text-align:center;padding:8px 10px;border-top:1px solid #e1d8ca}
+.roster-unlink:hover{background:#f4e5dd;text-decoration:none}
+.roster-hidden{flex-direction:row;align-items:center;gap:12px;padding:10px;border-style:dashed;background:#f7f3ea}
+.roster-hidden:hover{transform:none;border-color:#c5bbae}
+.roster-lock{width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;background:#e6dfd2;font-size:22px}
+.roster-hidden span{display:flex;flex-direction:column;min-width:0}
+.roster-hidden strong{font:16px 'Special Elite',Georgia,serif;color:#29241f}
+.roster-hidden small{color:#6f665b;font-size:13px}
+.roster-empty{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:20px;border:1px dashed #b8ad9e;background:#f7f3ea}
+.roster-empty-mark{width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center;border:1px solid #c5bbae;background:#fffdf7;color:#a43d30;font-size:24px}
+.roster-empty strong{font:20px 'Special Elite',Georgia,serif;color:#29241f}
+.roster-empty p{margin:4px 0 0;color:#6f665b;font-size:14px;line-height:1.5}
+/* Dropdowns com a seta um pouco para dentro */
+.campaign-detail select,.share-dialog select,#rating-preset,#roll-stat,.combat-actions select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238e382d' stroke-width='1.8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;background-size:12px 8px;padding-right:44px}
+.combat-actions select{background-position:right 10px center;padding-right:30px}
+/* Excluir campanha */
+.campaign-delete{margin-left:auto;font-size:13px}
+.campaign-list .campaign-card{align-items:stretch}
+a.site-identity{text-decoration:none;width:fit-content;transition:opacity .15s}
+a.site-identity:hover{opacity:.75}
+a.site-identity:focus-visible{outline:2px solid #a43d30;outline-offset:4px}
+.roster-empty-mark img{width:34px;height:auto;opacity:.75}
+.battle-columns h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.battle-columns h3 .secret-tag{margin-left:0;line-height:1;padding:4px 7px;display:inline-flex;align-items:center}
+/* Cartões de campanha: mesmo hover dos cartões de caçador (sobe e ganha a sombra diagonal) */
+.campaign-list .campaign-card{transition:transform .2s,border-color .2s,box-shadow .2s}
+.campaign-list .campaign-card:hover{transform:translateY(-5px);border-color:#a43d30;box-shadow:5px 5px 0 #c7bdaf}
+.campaign-list .campaign-card.selected{border-color:#a43d30;box-shadow:5px 5px 0 #c7bdaf}
+@media(prefers-reduced-motion:reduce){.campaign-list .campaign-card:hover{transform:none}}
+/* Placeholder de foto: o olho do logo, discreto */
+.cover-placeholder{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.cover-placeholder img{width:34%;max-width:120px;min-width:44px;height:auto;opacity:.35}
+.campaign-list .campaign-card-cover .cover-placeholder img{width:34%;height:auto;object-fit:contain}
+.invite-cover .cover-placeholder img{filter:invert(1);opacity:.3}
+#portrait-placeholder img{width:60%;height:auto;opacity:.35}
